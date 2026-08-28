@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs"
 import { z } from "zod"
 import { getTokenCost } from "./cost"
 import { getAgentConfig, loadConfig } from "./config"
@@ -107,9 +108,16 @@ interface RawResponse {
 }
 
 function offlineResponse(opts: CallOptions): RawResponse {
-  const content = opts.responseFormat === "json"
+  // LLM_OFFLINE_RESPONSE: path to a JSON-compatible response payload. The
+  // loop dry-run uses this to exercise the real call/logging path with a
+  // canned completion (e.g. a pre-recorded review artifact).
+  const overridePath = process.env.LLM_OFFLINE_RESPONSE
+  let content = opts.responseFormat === "json"
     ? JSON.stringify({ ok: true, greeting: "Hello from offline DeepSeek" })
     : "Offline mode: canned completion. No LLM was called."
+  if (overridePath) {
+    content = readFileSync(overridePath, "utf-8")
+  }
   return {
     content,
     usage: { promptTokens: 42, completionTokens: 7, cachedTokens: 30 },

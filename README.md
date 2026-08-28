@@ -21,6 +21,7 @@ cp .env.example .env   # set DEEPSEEK_API_KEY
 bun run typecheck                 # tsc clean (covers src/, tools/, checks/)
 LLM_OFFLINE=1 bun run smoke       # dummy call → writes llm_calls row (no network)
 bun run check -- <chapter>.md <outline>.json   # deterministic gate
+bun run loop -- <novelDirOrName> <chapterN> [--dry]  # chapter loop
 bun run session-summary           # per-agent calls, cost, cache-hit %
 bun run session-summary --latest  # last session only
 bun run inspect --chapter 1 --agent reviewer
@@ -34,6 +35,7 @@ src/llm.ts        slim DeepSeek client: extractJSON, retry/timeout, cost, loggin
 src/db.ts         SQLite schema: llm_calls (parity + session_id), chapters, reviews, feedback
 src/config.ts     config.json loader (two DeepSeek models, per-agent params)
 src/cost.ts       getTokenCost: cached-rate math
+src/loop/         chapter loop: plan → draft → gate → review → fix → disposition
 tools/            smoke-call, session-summary, inspect-calls, export-from-old-db
 checks/           validation, integrity, quality, contract-shape (ported) + run.ts
 prompts/          writer-brief, reviewer-rubric, planner-contract, verbatim texts
@@ -43,6 +45,7 @@ LESSONS.md        RL memory (L121 dispositions → prompt edits)
 
 ## Status
 
-Phases 1–2 complete (scaffold + telemetry parity; checks + prompts extracted,
-gate met on the saved old chapter). Phase 3 is the pi chapter-loop —
-project state in `docs/current-state.md`.
+Phases 1–3 complete: scaffold + telemetry parity, checks + prompts
+extracted (gate met on saved old chapter), and the chapter loop running
+dry on fixtures. Phase 4 is the Rillgate ch1 pilot — project state in
+`docs/current-state.md`.

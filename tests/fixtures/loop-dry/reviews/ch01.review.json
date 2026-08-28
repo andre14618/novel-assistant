@@ -1,0 +1,23 @@
+{
+  "plan_adherence": {
+    "setting_match": {
+      "planned": "Guild tower room, Vellin",
+      "observed": "the tower room... hearth behind her",
+      "matches": true
+    },
+    "emotional_arc_correct": true,
+    "pass": true,
+    "deviations": []
+  },
+  "continuity": {
+    "facts_contradicted": [],
+    "state_violations": []
+  },
+  "planned_state": {
+    "ungrounded": []
+  },
+  "event_enactment": {
+    "missing_obligations": []
+  },
+  "passed": true
+}

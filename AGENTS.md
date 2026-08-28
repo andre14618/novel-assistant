@@ -85,9 +85,11 @@ keep it diagnostic/docs-only or stop for user judgment.
   ported checks pass on the saved old chapter
   (`bun checks/run.ts tests/fixtures/cartographer-ch7.md …`) and match the old
   modules' outputs on the same text.
-- **Phase 3 (next)** — the pi chapter-loop: wire brief assembly, merged
-  review, fix + disposition into one loop over files (dry-run on fixtures
-  without LLM first).
+- **Phase 3 ✅** — the pi chapter-loop: `src/loop/` steps (plan → draft →
+  deterministic gate → merged review → fix → disposition) over files.
+  Gate met: `tests/fixtures/loop-dry` chapter runs end-to-end with
+  `--dry` (no live LLM), artifacts + telemetry written, LESSONS/state
+  updates idempotent per session.
 - **Phase 4** — pilot Rillgate ch1 from the repaired source; gate = chapter
   drafted, reviewed, disposition recorded; per-chapter cost ≤ old; loop time
   minutes-to-hours.

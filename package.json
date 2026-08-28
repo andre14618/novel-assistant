@@ -10,9 +10,11 @@
     "session-summary": "bun tools/session-summary.ts",
     "inspect": "bun tools/inspect-calls.ts",
     "export-old": "bun tools/export-from-old-db.ts",
-    "check": "bun checks/run.ts"
+    "check": "bun checks/run.ts",
+    "loop": "bun src/loop/run.ts"
   },
   "dependencies": {
+    "yaml": "^2.9.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
