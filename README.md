@@ -45,7 +45,11 @@ LESSONS.md        RL memory (L121 dispositions → prompt edits)
 
 ## Status
 
-Phases 1–3 complete: scaffold + telemetry parity, checks + prompts
-extracted (gate met on saved old chapter), and the chapter loop running
-dry on fixtures. Phase 4 is the Rillgate ch1 pilot — project state in
+Phases 1–4 complete: scaffold + telemetry parity, checks + prompts
+extracted (gate met on saved old chapter), chapter loop running (dry-run
+gate met), and the **Rillgate ch1 pilot ran live** — drafted, reviewed
+(merged judge caught 2 real defects, 0 false positives), disposition
+recorded; draft+review $0.0104 (old band $0.008–0.013), ≈2–3 min wall
+clock. Evidence: `docs/evidence/pilot-rillgate-ch1.md`. Phase 5 closes
+ the fixer + calendar-anchor gaps before ch2. Project state in
 `docs/current-state.md`.
