@@ -1,0 +1,265 @@
+[
+  {
+    "id": "rillgate-contrast-v1",
+    "title": "Rillgate Contrasting Voice Bible",
+    "description": "Deep Rillgate pack with operational guild-law world pressure and sharply differentiated Kael/Tessa/Orin/Varn voices.",
+    "storyRules": [
+      {
+        "id": "pack:rillgate-contrast-v1:story:contract-law-wins",
+        "kind": "story",
+        "title": "Contract law wins scenes",
+        "text": "Important victories should become legal leverage, witness standing, admissible proof, rank movement, or contract pressure; raw courage alone is not enough.",
+        "appliesWhen": "Rillgate scenes that land or adjudicate an important victory involving contracts, rank, witnesses, salvage rights, proof, debt, or return-to-hub outcomes.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "selectionHints": [
+          "legal leverage",
+          "witness standing",
+          "admissible evidence",
+          "admissible proof",
+          "rank movement",
+          "contract pressure",
+          "salvage rights",
+          "salvage claim",
+          "return to hub"
+        ]
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:story:progression-cost-ledger",
+        "kind": "story",
+        "title": "Progression has a ledger",
+        "text": "Iron-thread or tactical progress must leave a visible debit: pain, reduced options, owed witness help, damaged gear, legal exposure, or faction attention.",
+        "appliesWhen": "Scenes that use iron-thread binding, a new tactic, rank movement, salvage gain, or survival victory.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "selectionHints": [
+          "iron-thread",
+          "iron thread",
+          "new tactic",
+          "rank movement",
+          "salvage gain",
+          "survival victory",
+          "damaged gear",
+          "legal exposure"
+        ]
+      }
+    ],
+    "worldRules": [
+      {
+        "id": "pack:rillgate-contrast-v1:world:paper-is-weapon",
+        "kind": "world",
+        "title": "Paper is a weapon",
+        "text": "Guild documents are physical weapons: seals, witness marks, toll logs, rank tokens, salvage clauses, and debt markers should change what characters can claim or safely do. Example texture: the seal weight changes who is believed.",
+        "appliesWhen": "Contract Hall, gate, hub, return, negotiation, evidence, and witness scenes.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "selectionHints": [
+          "contract",
+          "contract hall",
+          "seal",
+          "witness mark",
+          "toll log",
+          "rank token",
+          "salvage clause",
+          "debt marker",
+          "evidence",
+          "witness"
+        ]
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:world:salt-brine-iron",
+        "kind": "world",
+        "title": "Salt, brine, and iron bite",
+        "text": "Rillgate texture should feel abrasive and useful: salt dust dries mouths, brine eats skin and gear, iron-thread bites nerves, lamps gutter on wet stone. Example texture: salt on the tongue makes the cost physical.",
+        "appliesWhen": "Mine, road, contract hall, combat, fatigue, or magic-cost scenes.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "selectionHints": [
+          "salt dust",
+          "brine",
+          "iron-thread",
+          "iron thread",
+          "wet stone",
+          "mine",
+          "combat",
+          "fatigue",
+          "magic cost"
+        ]
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:world:rank-changes-body-language",
+        "kind": "world",
+        "title": "Rank changes body language",
+        "text": "Rank is visible in who steps aside, who gets named, who signs first, who must pay, and who is allowed to be believed. Example texture: a clerk looks at the token before the face.",
+        "appliesWhen": "Scenes with bronze rank, unranked status, guild rooms, rival crews, clerks, brokers, witnesses, or guards.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "selectionHints": [
+          "bronze rank",
+          "unranked",
+          "rank token",
+          "guild room",
+          "clerk",
+          "broker",
+          "witness",
+          "guard"
+        ]
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:world:debts-have-handles",
+        "kind": "world",
+        "title": "Debts have handles",
+        "text": "Debt pressure should appear as transferable markers, stamped notices, sale bells, creditor seals, lodging risk, or legal custody. Example texture: a sale date turns fear into a deadline.",
+        "appliesWhen": "Mira/debt scenes, contract decisions, hub scenes, and return-status scenes.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "selectionHints": [
+          "debt",
+          "marker",
+          "stamped notice",
+          "sale bell",
+          "creditor seal",
+          "lodging risk",
+          "legal custody",
+          "sale date"
+        ]
+      }
+    ],
+    "characterRules": [
+      {
+        "id": "pack:rillgate-contrast-v1:char:kael:risk-math",
+        "kind": "character",
+        "title": "Kael Rusk risk math",
+        "text": "Kael converts fear into price, deadline, witness, leverage, bodily cost, and exit math. Example: \"Four days. No witness. One patron with clean registration.\"",
+        "appliesWhen": "Kael Rusk is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Kael Rusk"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:char:kael:stress-speech",
+        "kind": "character",
+        "title": "Kael Rusk stress speech",
+        "text": "Kael speaks clipped and transactional: short sentences, direct refusals, contract shorthand. Example: \"Name the price. Then the catch.\"",
+        "appliesWhen": "Kael Rusk is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Kael Rusk"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:char:tessa:line-and-point",
+        "kind": "character",
+        "title": "Tessa Mire line-and-point mind",
+        "text": "Tessa reads scenes like spear geometry: point, line, distance, footing, openings, and who holds formation. Example: \"Your point is open. Fix it before you speak.\"",
+        "appliesWhen": "Tessa Mire is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Tessa Mire"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:char:tessa:dry-cut",
+        "kind": "character",
+        "title": "Tessa Mire dry cut",
+        "text": "Tessa's voice is controlled and cutting. She uses restrained corrections and field-aware questions. Example: \"Fine. Bleed on your own side, then.\"",
+        "appliesWhen": "Tessa Mire is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Tessa Mire"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:char:orin:clause-mind",
+        "kind": "character",
+        "title": "Orin Vale clause mind",
+        "text": "Orin turns danger into clauses, admissibility, procedure, and conditional risk. Example: \"I did not say safe. I said admissible.\"",
+        "appliesWhen": "Orin Vale is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Orin Vale"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:char:orin:paper-ritual",
+        "kind": "character",
+        "title": "Orin Vale paper ritual",
+        "text": "Orin's presence should make documents tactile: sanded ink, seal weight, margin notes, ledger columns, careful pauses. Example: he answers after blotting the line.",
+        "appliesWhen": "Orin Vale is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Orin Vale"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:char:varn:velvet-knife",
+        "kind": "character",
+        "title": "Lady Varn velvet knife",
+        "text": "Lady Varn threatens through courtesy. Her questions are commands, her generosity is pricing, and her violence stays inside mutual benefit language. Example: \"How fortunate that your desperation is so punctual.\"",
+        "appliesWhen": "Lady Varn is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Lady Varn"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:char:varn:no-direct-ugliness",
+        "kind": "character",
+        "title": "Lady Varn no direct ugliness",
+        "text": "Lady Varn names satisfactory terms, discretion, opportunity, and unfortunate necessities. Example: \"Let us call it an opportunity before someone less polite calls it debt.\"",
+        "appliesWhen": "Lady Varn is POV, present, obligated, speaking, thinking, or materially shaping the scene.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Lady Varn"
+      }
+    ],
+    "relationshipRules": [
+      {
+        "id": "pack:rillgate-contrast-v1:rel:kael-tessa:competence-before-trust",
+        "kind": "relationship",
+        "title": "Kael Rusk / Tessa Mire",
+        "text": "Kael and Tessa should move by competence, proof, and witness utility before warmth. Respect appears as tactical coordination before either admits trust.",
+        "appliesWhen": "Both Kael Rusk and Tessa Mire are present or the scene changes their leverage, trust, debt, threat, or witness value.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Kael Rusk",
+        "relatedCharacterName": "Tessa Mire"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:rel:kael-orin:warning-vs-risk",
+        "kind": "relationship",
+        "title": "Kael Rusk / Orin Vale",
+        "text": "Kael pushes for usable loopholes; Orin supplies limits. Their affection is disguised as warnings, corrections, and refusing to let the other make a legally stupid move.",
+        "appliesWhen": "Both Kael Rusk and Orin Vale are present or the scene changes their leverage, trust, debt, threat, or witness value.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Kael Rusk",
+        "relatedCharacterName": "Orin Vale"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:rel:kael-varn:priced-disposability",
+        "kind": "relationship",
+        "title": "Kael Rusk / Lady Varn",
+        "text": "Kael should sense Varn pricing him as disposable while Varn treats his suspicion as another negotiable term.",
+        "appliesWhen": "Both Kael Rusk and Lady Varn are present or the scene changes their leverage, trust, debt, threat, or witness value.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Kael Rusk",
+        "relatedCharacterName": "Lady Varn"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:rel:tessa-varn:sponsor-snare",
+        "kind": "relationship",
+        "title": "Tessa Mire / Lady Varn",
+        "text": "Tessa's sponsor pressure should make Varn's politeness feel like a snare: Varn never needs to raise her voice because debt already holds the spear.",
+        "appliesWhen": "Both Tessa Mire and Lady Varn are present or the scene changes their leverage, trust, debt, threat, or witness value.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1",
+        "characterName": "Tessa Mire",
+        "relatedCharacterName": "Lady Varn"
+      }
+    ],
+    "voiceRules": [
+      {
+        "id": "pack:rillgate-contrast-v1:voice:hardboiled-ledger-fantasy",
+        "kind": "voice",
+        "title": "Hardboiled ledger fantasy",
+        "text": "The baseline voice should feel like adult mission fantasy with a hard ledger edge: clean physical action, legal pressure, costly magic, and dry restraint.",
+        "appliesWhen": "All Rillgate scenes.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:voice:dialogue-fingerprints",
+        "kind": "voice",
+        "title": "Dialogue fingerprints",
+        "text": "Dialogue should make speakers identifiable without tags: Kael clipped and transactional, Tessa pointed and field-aware, Orin conditional and legal, Varn smooth and coercive.",
+        "appliesWhen": "Any scene with two or more named speakers.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1"
+      },
+      {
+        "id": "pack:rillgate-contrast-v1:voice:no-generic-heroic-swelling",
+        "kind": "voice",
+        "title": "No generic heroic swelling",
+        "text": "Let status, debt, blood, seals, brine, rank, witness marks, and changed leverage carry the emotional force.",
+        "appliesWhen": "Action, sacrifice, return, progression, and payoff scenes.",
+        "source": "authoring-bible-pack:rillgate-contrast-v1"
+      }
+    ]
+  }
+]

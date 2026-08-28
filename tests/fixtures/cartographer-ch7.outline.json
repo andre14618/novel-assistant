@@ -1,0 +1,29 @@
+{
+  "chapterNumber": 7,
+  "title": "The Surveyor's Confession",
+  "targetWords": 2000,
+  "povCharacter": "Alory Vane",
+  "charactersPresent": ["Alory Vane", "Elara Venn"],
+  "scenes": [
+    {
+      "sceneId": "ch7-s1",
+      "description": "Alory confronts Elara in the tower room about the four-degree discrepancy between her survey bearing of forty-seven degrees and the previous map's forty-three"
+    },
+    {
+      "sceneId": "ch7-s2",
+      "description": "Elara offers Alory a Guild appointment with a seal and blank signature lines, shifting the conversation from bearings to offers and the Guild seal"
+    },
+    {
+      "sceneId": "ch7-s3",
+      "description": "Alory recounts Master Therin's death at the northern ford after he measured a discrepancy, and states that the Guild moved the boundary stone and re-set it with fresh earth"
+    },
+    {
+      "sceneId": "ch7-s4",
+      "description": "Elara explains the Guild's intent about the northern border, the Crown's surveyors, and the truth their maps would have revealed, asking Alory to burn her journal"
+    },
+    {
+      "sceneId": "ch7-s5",
+      "description": "Alory refuses the offer and leaves; Elara opens the window and orders the Thornwood posts to take Alory alive and marks Renn of Hollow's Rest expendable"
+    }
+  ]
+}

@@ -17,14 +17,16 @@ The architecture proposal is the reference: `docs/proposals/pi-chapter-loop-arch
 
 ```
 novels/<name>/          seed.md, canon/, plan/, chapters/, feedback/, state.md
-prompts/                writer-brief, reviewer rubric, planner contract (phase 2+)
-checks/                 deterministic checks: integrity, grounding, POV, word count (phase 2+)
-tools/                  llm client wrappers, session-summary, inspect-calls, export-from-old-db
+prompts/                writer-brief.md, reviewer-rubric.md, planner-contract.md,
+                        writer/, planner/, reviewer/, authoring-bible.packs.json
+checks/                 deterministic: validation, integrity, quality, contract-shape
 src/                    config.ts, db.ts, cost.ts, llm.ts (slim core)
+tools/                  smoke-call, session-summary, inspect-calls, export-from-old-db
+tests/fixtures/         saved old-harness chapter + outline (check gate)
 calls.db                SQLite telemetry (gitignored, created on first run)
 config.json             two DeepSeek models, per-agent params
 LESSONS.md              RL memory: generalized lessons + prompt revisions
-docs/proposals/         the migration proposal (reference)
+docs/                   current-state.md, decisions/ (L099, L121), proposals/
 ```
 
 ## Loop protocol (L121/trace-ID discipline)
@@ -33,15 +35,19 @@ One pi session per chapter, six steps. Keep trace IDs and the L121 feedback
 taxonomy — they are the continuity contract with the old repo.
 
 1. **Plan** — reads `canon/` + `feedback/` + `LESSONS.md` + `state.md`, writes
-   `plan/chNN.yaml` (scene contracts: obligations + endpoints, L095/L110 shape).
-2. **Draft** — writer generates scene-by-scene from the carried-over writer-brief
-   prompt stack → `chapters/chNN.md`.
-3. **Review** — one merged judge call (plan adherence, continuity, state
-   grounding, event enactment) → scene-indexed findings.
-4. **Fix** — fixer rewrites only flagged scenes, bounded retries.
-5. **Disposition** — `feedback/chNN-review.md` with the L121 five-way
+   `plan/chNN.yaml` (scene contracts per `prompts/planner-contract.md`;
+   guard with `checks/contract-shape.ts` — no anchor-only scenes).
+2. **Draft** — writer generates scene-by-scene from the writer-brief stack
+   (`prompts/writer-brief.md` assembly spec) → `chapters/chNN.md`.
+3. **Deterministic gate** — `bun checks/run.ts` (validation + integrity +
+   quality) before any LLM review; `validateLintFixIntegrity` guards repairs.
+4. **Review** — one merged judge call (`prompts/reviewer-rubric.md` +
+   `reviewer/context-spec.md`): plan adherence, continuity, state grounding,
+   event enactment → scene-indexed findings.
+5. **Fix** — fixer rewrites only flagged scenes, bounded retries.
+6. **Disposition** — `feedback/chNN-review.md` with the L121 five-way
    classification; reusable lessons append to `LESSONS.md` as small prompt edits.
-6. **Update** `state.md`; the next session's context pack is `canon/` +
+7. **Update** `state.md`; the next session's context pack is `canon/` +
    `feedback/` + `LESSONS.md`.
 
 ## Telemetry discipline
@@ -73,18 +79,19 @@ keep it diagnostic/docs-only or stop for user judgment.
 
 ## Phase gates (from the proposal §7)
 
-- **Phase 1 (active)**: layout, AGENTS.md, slim `llm.ts`, full-fidelity
-  `llm_calls` schema, `config.json`, seed import/export script.
-  Gate: `tsc` clean; `bun run smoke` writes a row; `bun run session-summary` renders.
-- **Phase 2**: extract prompts + deterministic checks from novel-harness
-  (keep-list: writer prompt stack, authoring-bible packs, integrity/quality
-  detectors, POV/word-count checks) and adapt.
-- **Phase 3**: the pi chapter-loop skill (plan → draft → review → fix →
-  disposition), dry-run on files without LLM.
-- **Phase 4**: pilot Rillgate ch1 from the repaired source; gate = chapter
+- **Phase 1 ✅** — scaffold + telemetry parity. Gate met: `tsc` clean;
+  `bun run smoke` writes a row; `bun run session-summary` renders.
+- **Phase 2 ✅** — prompts + deterministic checks extracted/adapted. Gate met:
+  ported checks pass on the saved old chapter
+  (`bun checks/run.ts tests/fixtures/cartographer-ch7.md …`) and match the old
+  modules' outputs on the same text.
+- **Phase 3 (next)** — the pi chapter-loop: wire brief assembly, merged
+  review, fix + disposition into one loop over files (dry-run on fixtures
+  without LLM first).
+- **Phase 4** — pilot Rillgate ch1 from the repaired source; gate = chapter
   drafted, reviewed, disposition recorded; per-chapter cost ≤ old; loop time
   minutes-to-hours.
-- **Phase 5**: iterate; feedback-per-chapter trending down via `LESSONS.md`.
+- **Phase 5** — iterate; feedback-per-chapter trending down via `LESSONS.md`.
 
 ## Keep it slim
 

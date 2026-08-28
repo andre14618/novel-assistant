@@ -18,8 +18,9 @@ cp .env.example .env   # set DEEPSEEK_API_KEY
 ## Commands
 
 ```sh
-bun run typecheck                 # tsc clean (phase-1 gate)
+bun run typecheck                 # tsc clean (covers src/, tools/, checks/)
 LLM_OFFLINE=1 bun run smoke       # dummy call → writes llm_calls row (no network)
+bun run check -- <chapter>.md <outline>.json   # deterministic gate
 bun run session-summary           # per-agent calls, cost, cache-hit %
 bun run session-summary --latest  # last session only
 bun run inspect --chapter 1 --agent reviewer
@@ -34,13 +35,14 @@ src/db.ts         SQLite schema: llm_calls (parity + session_id), chapters, revi
 src/config.ts     config.json loader (two DeepSeek models, per-agent params)
 src/cost.ts       getTokenCost: cached-rate math
 tools/            smoke-call, session-summary, inspect-calls, export-from-old-db
+checks/           validation, integrity, quality, contract-shape (ported) + run.ts
+prompts/          writer-brief, reviewer-rubric, planner-contract, verbatim texts
 novels/<name>/    seed.md, canon/, plan/, chapters/, feedback/, state.md
-prompts/          phase 2 — carried-over prompt stack
-checks/           phase 2 — deterministic checks
 LESSONS.md        RL memory (L121 dispositions → prompt edits)
 ```
 
 ## Status
 
-Phase 1 (scaffold + telemetry parity) — project state in
-`docs/current-state.md`.
+Phases 1–2 complete (scaffold + telemetry parity; checks + prompts extracted,
+gate met on the saved old chapter). Phase 3 is the pi chapter-loop —
+project state in `docs/current-state.md`.
