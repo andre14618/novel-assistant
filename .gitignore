@@ -1,0 +1,6 @@
+node_modules/
+.env
+calls.db
+calls.db-*
+exports/
+.DS_Store

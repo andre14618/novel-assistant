@@ -1,0 +1,21 @@
+{
+  "name": "novel-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pi-driven, file-first, chapter-by-chapter authoring loop with DeepSeek as sole LLM driver and SQLite telemetry. Successor to novel-harness (see docs/proposals/).",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "smoke": "bun tools/smoke-call.ts",
+    "session-summary": "bun tools/session-summary.ts",
+    "inspect": "bun tools/inspect-calls.ts",
+    "export-old": "bun tools/export-from-old-db.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.5.0"
+  }
+}
