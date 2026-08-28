@@ -90,10 +90,14 @@ keep it diagnostic/docs-only or stop for user judgment.
   Gate met: `tests/fixtures/loop-dry` chapter runs end-to-end with
   `--dry` (no live LLM), artifacts + telemetry written, LESSONS/state
   updates idempotent per session.
-- **Phase 4** — pilot Rillgate ch1 from the repaired source; gate = chapter
-  drafted, reviewed, disposition recorded; per-chapter cost ≤ old; loop time
-  minutes-to-hours.
-- **Phase 5** — iterate; feedback-per-chapter trending down via `LESSONS.md`.
+- **Phase 4 (pilot) ✅ provisional** — Rillgate ch1 live: drafted, reviewed,
+  disposition recorded; cost draft+review $0.0104 in-band with old;
+  turnaround ≈2–3 min. Evidence: `docs/evidence/pilot-rillgate-ch1.md`.
+  Fixer bounded-passes failed (repair-layer gap, LESSONS L-1) — chapter
+  preserved, ch1 passes; ch2+ blocked on the fixer + calendar-facts gaps.
+- **Phase 5** — iterate: scene-scoped fixer, calendar facts + continuity
+  anchors into writer brief, then ch2–ch3 with feedback-per-chapter
+  trending via `LESSONS.md`.
 
 ## Keep it slim
 

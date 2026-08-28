@@ -7,6 +7,17 @@ import { detectSyncDefects } from "../../checks/quality"
 import { readPlan, readChapter, writeChapter, writeState, readState, openNovel, ensureDir, type NovelDir, type PlanChapter } from "./novel"
 import { renderPlannerContext, renderWriterBrief, renderReviewerContext, readPrompt } from "./context"
 import { ReviewSchema, type ReviewResult } from "./review-schema"
+import { extractJSON } from "../llm"
+
+/** Writer responses are JSON-encoded per prose-writer-system.md ({"prose": ...}).
+ *  Falls back to raw content if the model returns plain text. */
+export function extractWriterProse(content: string): string {
+  try {
+    const parsed = JSON.parse(extractJSON(content)) as Record<string, unknown>
+    if (typeof parsed.prose === "string" && parsed.prose.trim().length > 0) return parsed.prose
+  } catch { /* not JSON — fall through */ }
+  return content
+}
 
 /**
  * src/loop/steps.ts — the six loop steps (AGENTS.md loop protocol).
@@ -100,7 +111,7 @@ export async function draftStep(novel: NovelDir, n: number, opts: StepOptions): 
     return { prose, gate: runDeterministicGate(prose, plan) }
   }
 
-  const system = readPrompt("writer/prose-writer-system.md")
+  const system = readPrompt("writer/beat-writer-system.md")
   const sceneProses: string[] = []
   for (let i = 0; i < plan.scenes.length; i++) {
     const brief = renderWriterBrief(plan, novel.canon, i)
@@ -108,13 +119,15 @@ export async function draftStep(novel: NovelDir, n: number, opts: StepOptions): 
       agent: "writer",
       systemPrompt: system,
       userPrompt: brief,
+      // beat-writer-system.md: plain prose, no JSON wrapper.
       responseFormat: "text",
       thinking: false,
       chapter: n,
       sessionId: opts.sessionId,
       logMetadata: { sceneIndex: i, sceneId: plan.scenes[i]?.scene_id ?? null },
     })
-    sceneProses.push(outcome.content.trim())
+    const prose = extractWriterProse(outcome.content)
+    sceneProses.push(prose.trim())
     console.log(`[LOOP] draft scene ${i + 1}/${plan.scenes.length} (${outcome.usage.promptTokens}→${outcome.usage.completionTokens} tok, $${outcome.cost.toFixed(5)})`)
   }
   const prose = sceneProses.join("\n\n")

@@ -351,7 +351,16 @@ export async function callAgent<T>(opts: AgentCallOptions<T>): Promise<AgentCall
     const outcome: CallOutcome = first !== null
       ? await callLLM({ ...opts, userPrompt: repairUserPrompt(first.content) })
       : await callLLM({ ...opts, responseFormat: "json" })
-    const jsonStr = extractJSON(outcome.content)
+    let jsonStr: string
+    try {
+      jsonStr = extractJSON(outcome.content)
+    } catch (err) {
+      if (attempt === 0) {
+        first = outcome
+        continue
+      }
+      throw new Error(`Agent '${opts.agent}' returned unparseable JSON after repair: ${err instanceof Error ? err.message : String(err)}`)
+    }
     let output: T
     try {
       output = opts.schema.parse(JSON.parse(jsonStr))

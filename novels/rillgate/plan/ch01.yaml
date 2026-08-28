@@ -1,0 +1,187 @@
+chapter: 1
+title: The Debt Bell
+pov: Kael Rusk
+setting: Rillgate Contract Hall and debt-market district
+purpose: Kael learns Mira's debt marker will be sold outside guild protection before
+  the next contract bell. After searching the hall for safe jobs and testing a creditor's
+  deadline, he accepts Orin's warning that only admissible evidence or bronze rank
+  can protect her. He leaves with Lady Varn's address as his only lead, the contract
+  unsigned.
+target_words: 2635
+characters_present:
+- Kael Rusk
+- Orin Vale
+- Hask the creditor
+scenes:
+- scene_id: ch-001-debt-bell-scene-001-kael-enters-rillgate-contract-hall
+  beat_id: b1
+  kind: hub-pressure
+  description: "Kael enters the Rillgate Contract Hall and scans the posting board:\
+    \ the only contract paying before the tenth is the Gray Salt Mine deep-salvage\
+    \ run with iron-thread binding \u2014 the run that has killed three men."
+  characters:
+  - Kael Rusk
+  anchors:
+    temporal: dusk, four days before Mira's marker sale
+    place: Rillgate Contract Hall, posting board
+  dramatic:
+    goal: find a contract that pays before the tenth
+    opposition: no safe posting pays before the bell
+    turning_point: the Gray Salt posting is the only fit
+    crisis_choice: take the death posting or keep searching
+    choice_alternatives:
+    - take the Gray Salt run
+    - keep scanning the lower boards
+    - ask Orin what the law allows
+    outcome: Kael decides to ask Orin about the law
+    consequence: the reading of the board becomes a legal question
+    pov_personal_stake: Mira's marker sells in four days
+    value_in: Mira's safety
+    value_out: a debt he cannot price
+  endpoint: Kael crosses the hall to Orin's desk with the legal question instead of
+    a contract.
+  obligations:
+  - text: establish the four-day deadline and the Gray Salt posting's terms
+    obligation_id: obl-ch1s1-o1
+  target_words: 556
+- scene_id: ch-001-debt-bell-scene-002-kael-approaches-orin-vale-s
+  beat_id: b2
+  kind: law-clause
+  description: Kael approaches Orin Vale's clerk desk and asks whether rank law can
+    make the Gray Salt contract legal protection for Mira without a witness; Orin
+    lays out admissible evidence, witness marks, and the rank requirement.
+  characters:
+  - Kael Rusk
+  - Orin Vale
+  anchors:
+    temporal: dusk, same hour
+    place: Contract Hall, Orin's clerk desk
+  dramatic:
+    goal: find the legal path that keeps Mira out of a creditor's hand
+    opposition: unwitnessed claims and unranked status both fail
+    turning_point: Orin names admissible evidence and bronze rank as the only protections
+    crisis_choice: trust the law or take the run unverified
+    choice_alternatives:
+    - verify the path legally
+    - take the contract as-is
+    - find another lead
+    outcome: Kael leaves with the rank/evidence requirement and Lady Varn's address
+    consequence: the legal floor is now known and it is not enough yet
+    pov_personal_stake: Kael's own body if the law fails
+    value_in: an admissible path
+    value_out: time spent where the clock is short
+  endpoint: Kael knows what legal protection would require and what it costs.
+  obligations:
+  - text: establish what counts as admissible evidence and why Kael cannot produce
+      it yet
+    obligation_id: obl-ch1s2-o1
+  target_words: 757
+- scene_id: ch-001-debt-bell-scene-003-kael-goes-debt-market-district
+  beat_id: b3
+  kind: creditor-pressure
+  description: Kael goes into the debt-market district and presses Hask the creditor
+    on the sale deadline, testing whether the marker's terms can be moved or priced.
+  characters:
+  - Kael Rusk
+  - Hask the creditor
+  anchors:
+    temporal: same evening
+    place: debt-market district, Hask's stall
+  dramatic:
+    goal: test whether the deadline can be moved or bought
+    opposition: Hask prices the deadline, not the debt
+    turning_point: the marker's sale is mediated by the bell, not by goodwill
+    crisis_choice: pay for a delay or accept the sale date
+    choice_alternatives:
+    - buy time
+    - threaten the sale
+    - walk out
+    outcome: Kael learns the price of the deadline and the buyer's name is not his
+    consequence: the only lever left is earning before the bell
+    pov_personal_stake: Mira's marker in a stranger's ledger
+    value_in: a deadline he can work
+    value_out: a price he cannot pay twice
+  endpoint: Kael leaves the district knowing no creditor will wait for his rank.
+  obligations:
+  - text: test the creditor's deadline and get the terms of the sale
+    obligation_id: obl-ch1s3-o1
+  target_words: 425
+- scene_id: ch-001-debt-bell-scene-004-kael-returns-contract-hall-reviews
+  beat_id: b4
+  kind: review
+  description: Kael returns to the Contract Hall and reviews the postings again, weighing
+    the Gray Salt run against what the law can and cannot do.
+  characters:
+  - Kael Rusk
+  anchors:
+    temporal: same evening, later
+    place: Rillgate Contract Hall
+  dramatic:
+    goal: find a posting the law can support
+    opposition: every fast-pay posting requires rank or a witness
+    turning_point: the Gray Salt run is the only thing that fits the timeline
+    crisis_choice: commit to the run or follow the broker lead first
+    choice_alternatives:
+    - sign the Gray Salt contract
+    - meet Lady Varn first
+    - walk and gamble on the bell
+    outcome: Kael decides on the meeting, not the contract
+    consequence: the contract stays unsigned and the clock is the enemy
+    pov_personal_stake: the safety of walking away vs the cost of waiting
+    value_in: a chosen risk
+    value_out: the safety of having no choice
+  endpoint: Kael exits with the decision to meet Lady Varn before signing anything.
+  obligations:
+  - text: weigh the Gray Salt contract against the legal floor and commit to a next
+      move
+    obligation_id: obl-ch1s4-o1
+  target_words: 598
+- scene_id: ch-001-debt-bell-scene-005-kael-exits-contract-hall-evening
+  beat_id: b5
+  kind: endpoint-hook
+  description: "Evening: Kael exits the Contract Hall with Lady Varn's address in\
+    \ hand and the contract unsigned \u2014 the address is now the ultimatum: risk\
+    \ the broker's meeting or let the marker leave guild protection."
+  characters:
+  - Kael Rusk
+  anchors:
+    temporal: nightfall
+    place: Contract Hall doors, evening street
+  dramatic:
+    goal: leave with the best lead available
+    opposition: every other door is closed by rank or time
+    turning_point: the address turns from a lead into an ultimatum
+    crisis_choice: meet Varn now or walk away from Mira's marker
+    choice_alternatives:
+    - go to the meeting
+    - sign the Gray Salt run first
+    - walk and take the consequences
+    outcome: Kael chooses the meeting
+    consequence: the choice costs him the safety of walking away
+    pov_personal_stake: Mira's marker vs a broker's price
+    value_in: a real lead
+    value_out: the safety of walking away
+  endpoint: Kael heads toward an uncertain meeting that could save Mira or lead to
+    a worse trap.
+  obligations:
+  - text: end with the contract unsigned and the meeting chosen
+    obligation_id: obl-ch1s5-o1
+  target_words: 413
+facts_to_establish:
+- fact-2
+- fact-7
+knowledge_changes:
+- character: Kael Rusk
+  id: kc-1
+  knowledge: only admissible evidence or bronze rank can protect Mira's claim
+  source: gains from Orin Vale
+character_state_changes:
+- name: Kael Rusk
+  id: cs-1
+  location: leaves the Contract Hall
+  emotional: resolved, afraid
+  knows:
+  - the legal floor
+  - the sale date
+  does_not_know:
+  - what Lady Varn will charge

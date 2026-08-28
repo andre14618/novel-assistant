@@ -1,0 +1,57 @@
+{
+  "plan_adherence": {
+    "setting_match": {
+      "planned": "Rillgate Contract Hall and debt-market district",
+      "observed": "Rillgate Contract Hall, Orin's desk, Hask's stall in the debt-market district, Contract Hall, evening street outside the Hall",
+      "matches": true
+    },
+    "emotional_arc_correct": true,
+    "pass": false,
+    "deviations": [
+      {
+        "description": "The sale date is internally inconsistent: the chapter opens with the date-line reading Sixth day and counts four days until Mira's marker sale (Tenth), but Hask says the bell rings on the fourteenth-day.",
+        "beat_index": 2
+      },
+      {
+        "description": "The Gray Salt run is described in beat 4 as a safe haul contract along the Gray Salt road, contradicting its earlier established description as a lethal deep-salvage mine run with iron-thread binding.",
+        "beat_index": 3
+      }
+    ]
+  },
+  "continuity": {
+    "facts_contradicted": [
+      {
+        "fact": "Bronze rank is required to accept the contracts that pay before the tenth; unranked laborers cannot take them.",
+        "fact_id": "fact-3",
+        "severity": "blocker",
+        "classification": "logical_contradiction",
+        "evidence": "He could sign. Thumb the inked square, walk to the pay clerk, count silver before noon.",
+        "reasoning": "Kael is unranked, yet the Gray Salt posting—which pays on signature before the tenth—is presented as available for him to sign."
+      },
+      {
+        "fact": "The Gray Salt Mine deep-salvage run requires iron-thread binding and has killed three men in the last six months; it is the only posting that pays before the tenth.",
+        "fact_id": "fact-4",
+        "severity": "warning",
+        "classification": "logical_contradiction",
+        "evidence": "It was a haul contract, not a bounty. That meant the law could enforce one thing: the fee.",
+        "reasoning": "The same Gray Salt posting is first established as a deep-salvage mine run with iron-thread binding and a three-death history, then in beat 4 described as a road haul contract that is safe and paper-trail-visible."
+      },
+      {
+        "fact": "Kael Rusk is unranked; his sister Mira Rusk's marker goes to sale in four days.",
+        "fact_id": "fact-6",
+        "severity": "warning",
+        "classification": "logical_contradiction",
+        "evidence": "Date-line read Sixth day... Four days until the bell... Mira's marker went up / The bell rings the fourteenth-day. Eight sharp.",
+        "reasoning": "The marker sale is four days from the Sixth day (Tenth), but Hask gives the sale date as the fourteenth-day, an eight-day gap."
+      }
+    ],
+    "state_violations": []
+  },
+  "planned_state": {
+    "ungrounded": []
+  },
+  "event_enactment": {
+    "missing_obligations": []
+  },
+  "passed": false
+}

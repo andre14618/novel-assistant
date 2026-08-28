@@ -12,59 +12,59 @@ proposal is `docs/proposals/pi-chapter-loop-architecture-2026-05-18.md`.
 
 ## Posture
 
-- **Phases 1–3 complete, gate-met:**
-  - P1: scaffold + telemetry parity (`tsc` clean; smoke writes a row;
-    session-summary renders).
-  - P2: deterministic checks + prompt extraction. Evidence gate:
-    `bun checks/run.ts tests/fixtures/cartographer-ch7.md
-    tests/fixtures/cartographer-ch7.outline.json` → 0 blockers, 0 integrity
-    issues, 1 low repetition; outputs match the old modules on the same text.
-  - P3: the chapter loop (`src/loop/`). Evidence gate:
-    `LLM_OFFLINE=1 LLM_OFFLINE_RESPONSE=... bun src/loop/run.ts
-    tests/fixtures/loop-dry 1 --dry` → plan/draft read, gate passes, merged
-    review runs the real call path (canned), fix skips, disposition writes
-    feedback + LESSONS (idempotent per session) + state.md; reviewer row in
-    `llm_calls` with chapter=1 + session tag.
-- DeepSeek is the sole provider (two models: `deepseek-v4-flash`,
-  `deepseek-v4-pro`). No multi-provider registry, no orchestrator, no Postgres.
-- Files + git are the runtime. `calls.db` (SQLite) is telemetry only.
+- **Phases 1–4 complete:**
+  - P1 scaffold + telemetry parity; P2 checks + prompts (gates met).
+  - P3 chapter loop dry-run gate met (`tests/fixtures/loop-dry`).
+  - **P4 Rillgate ch1 pilot executed LIVE** — see
+    `docs/evidence/pilot-rillgate-ch1.md`. Gate: chapter drafted (3183w),
+    reviewed (merged judge caught 2 real deviations + 3 real fact
+    contradictions), disposition recorded; draft+review cost $0.0104 (in
+    the old per-chapter band $0.008–0.013), loop wall time ≈2–3 min.
+    Provisional pass; fixer step failed both bounded passes (repair-layer
+    gap, chapter preserved, LESSONS L-1).
+- DeepSeek is the sole provider (flash/pro). No orchestrator, no Postgres,
+  no UI. Files + git + `calls.db` telemetry.
 
 ## Active surfaces
 
-- `src/loop/` — run.ts CLI + steps.ts (plan/draft/gate/review/fix/dispose),
-  novel.ts (file access, yaml plans, state.md), context.ts (planner/writer/
-  reviewer context renderers per prompts/ specs), review-schema.ts (zod).
-- `src/llm.ts` — slim DeepSeek client; `LLM_OFFLINE_RESPONSE` override for
-  canned review payloads (dry-run path).
-- `src/db.ts` — `bun:sqlite` schema: `llm_calls` (parity + `session_id`),
-  `chapters`, `reviews`, `feedback`.
-- `checks/` + `prompts/` + `tests/fixtures/` — see AGENTS.md layout.
-- `tools/` — smoke-call, session-summary, inspect-calls, export-from-old-db.
+- `src/loop/` — run.ts CLI, steps.ts (six steps; `extractWriterProse`,
+  `runDeterministicGate`, `provisionalClassification`), novel.ts, context.ts
+  (planner/writer/reviewer renderers — **writer-brief steps 9–10
+  (continuity anchors, reader-info) not yet rendered** → pilot P0 gap),
+  review-schema.ts.
+- `src/llm.ts` — slim client; `LLM_OFFLINE_RESPONSE`; `callAgent` retries
+  extract+zod failures once. Reviewer runs **thinking=false + JSON mode**
+  (thinking + `response_format` conflict observed live: empty content at
+  cap; config.json reviewer maxTokens 16384).
+- `novels/rillgate/` — imported repaired-source lineage: seed, canon
+  (characters/facts/factId rows), plan/ch01.yaml (5 scenes, plannerspace
+  contract shape), chapters/ch01.md (pilot draft), reviews/, feedback/,
+  state.md.
+- `checks/`, `prompts/`, `tests/fixtures/` (incl. sameplan baseline),
+  `tools/`, `docs/evidence/`.
 
-## Not yet built (phase 4+)
+## Known gaps (phase 5 backlog, in priority order)
 
-- Rillgate ch1 pilot: import the repaired source (proposal §2 lineage
-  `rillgate-ch4-endpoint-hygiene-1778723371`) into `novels/rillgate/`,
-  write real plan + canon, run the loop for real (needs DEEPSEEK_API_KEY).
-  Gate: chapter drafted, reviewed, disposition recorded; per-chapter cost ≤
-  old per-chapter cost; loop time minutes-to-hours.
-- `chapters`/`reviews`/`feedback` table rows wired (loop currently writes
-  files; db-side joins land with the pilot or a writer step).
-- Seed import from old DB (export-from-old-db.ts when archive is up).
+1. **Scene-scoped fixer** — fixer replaces the whole chapter with a
+   scene-generation system prompt; gate caught 6 blockers both passes.
+   Build dedicated fixer prompt (flagged-excerpt revisions, character/POV
+   binding, per-beat application) — LESSONS L-1.
+2. **Calendar facts + continuity anchors in brief** — plan must pin one
+   schedule fact; writer brief must render fact continuity anchors +
+   reader-info state (writer-brief.md steps 9–10) — LESSONS L-2.
+3. db-side `chapters`/`reviews`/`feedback` rows (loop writes files; joins
+   for cost-per-quality land with ch2 or a writer step).
+4. Seed import from old DB (on hold; archive down).
 
 ## Verification commands
 
-- `bun run typecheck` — `tsc` clean (covers src/, tools/, checks/).
-- `LLM_OFFLINE=1 bun run smoke` — dummy call writes a row (no network).
-- `bun run check -- <chapter>.md <outline>.json` — deterministic gate.
-- `bun run loop -- <novelDirOrName> <chapterN> [--dry]` — chapter loop.
-- `bun run session-summary` / `inspect` — telemetry read-back.
+- `bun run typecheck` · `LLM_OFFLINE=1 bun run smoke` ·
+  `bun run check -- <chapter>.md <outline>.json` ·
+  `bun run loop -- <novelDirOrName> <chapterN> [--dry]` ·
+  `bun run session-summary [--session <id>]` · `bun run inspect [--chapter n]`.
 
-## Known gaps
+## Pilot cost snapshot (session pilot-rillgate-ch1, final run)
 
-- Writer/draft path is untested live (only offline-canned review path ran).
-- Fixer applies whole-chapter replacement on pass (not surgical scene swap)
-  — flagged-scene-only prompt, but application granularity is chapter-level.
-- Fixture outline reconstructed from the chapter (original plan JSON not in
-  output dirs).
-- Authoring-bible review layer deferred per proposal §8 open question.
+draft $0.00612 · review $0.00424 · fix (failed passes) $0.00524 →
+total $0.01560, 19 calls incl. earlier runs (writer 15 calls across 3
+draft iterations — final run reused: 5 writer, 1 reviewer, 2 fixer).
