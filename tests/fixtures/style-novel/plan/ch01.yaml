@@ -1,0 +1,42 @@
+chapter: 1
+title: The Green Light
+pov: Maro Kest
+setting: The harbor, dusk
+purpose: Maro weighs the job against the debt.
+target_words: 800
+characters_present:
+- Maro Kest
+scenes:
+- scene_id: fx-s1
+  beat_id: b1
+  kind: decision
+  description: Maro watches the harbor light and decides whether to take the run.
+  characters:
+  - Maro Kest
+  anchors:
+    temporal: dusk
+    place: The harbor
+  dramatic:
+    goal: decide on the run
+    outcome: Maro takes the run
+  endpoint: Maro takes the run
+  obligations:
+  - text: enact the decision beat
+    obligation_id: fx-s1-o1
+  target_words: 400
+- scene_id: fx-s2
+  beat_id: b2
+  kind: movement
+  description: Maro moves toward the quay as the light swings.
+  characters:
+  - Maro Kest
+  anchors:
+    place: The quay
+  dramatic:
+    goal: reach the quay
+  endpoint: Maro reaches the quay
+  target_words: 400
+facts_to_establish:
+- fact-1
+knowledge_changes: []
+character_state_changes: []

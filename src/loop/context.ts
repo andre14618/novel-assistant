@@ -6,7 +6,7 @@ import { validatePlanContinuity, type NovelDir, type PlanChapter } from "./novel
  * src/loop/context.ts — file-first context assemblies.
  *
  * Renderers follow the specs in prompts/: planner-contract.md,
- * writer-brief.md (steps 3/5/8 + character capsules), reviewer/context-spec.md.
+ * writer-brief.md (steps 3/6/9 + character capsules), reviewer/context-spec.md.
  * No DB, no embeddings: canon is file slices, facts are factId-tagged rows.
  */
 
@@ -116,18 +116,20 @@ export function parseCharacters(charactersMd: string): BriefCharacter[] {
 
 /**
  * Brief header + scene contract + obligations + continuity sections per
- * writer-brief.md (steps 3/5/8/9/10/14).
+ * writer-brief.md (steps 3/4/6/9/10/11/15).
  *
- * Stable section order (cache-prefix discipline): header, SCENE CONTRACT,
- * OBLIGATIONS, FACT CONTINUITY ANCHORS (schedule first, then canon facts
- * with ids), CONTINUITY ANCHORS (chapter-start states, scene-present
- * characters only), CHARACTERS, READER INFO STATE (READER KNOWS / WITHHOLD
- * FROM READER). Legacy plans (no continuity-contract fields) render a
- * concise unavailable marker in place of the continuity sections and never
- * fabricate state; a plan with partial/invalid version-1 fields throws
- * (fail closed). Empty lists render an honest `(none)`.
+ * Stable section order (cache-prefix discipline): header, STYLE (only when a
+ * per-novel style.md is present), SCENE CONTRACT, OBLIGATIONS, FACT
+ * CONTINUITY ANCHORS (schedule first, then canon facts with ids), CONTINUITY
+ * ANCHORS (chapter-start states, scene-present characters only), CHARACTERS,
+ * READER INFO STATE (READER KNOWS / WITHHOLD FROM READER). Legacy plans (no
+ * continuity-contract fields) render a concise unavailable marker in place of
+ * the continuity sections and never fabricate state; a plan with
+ * partial/invalid version-1 fields throws (fail closed). Empty lists render
+ * an honest `(none)`. A missing/empty `style` renders no STYLE section at
+ * all — honest absence, no fallback to the Salvatore primer.
  */
-export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], sceneIndex: number): string {
+export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], sceneIndex: number, style?: string | null): string {
   const scene = plan.scenes[sceneIndex]
   if (!scene) throw new Error(`scene index ${sceneIndex} out of range (${plan.scenes.length} scenes)`)
 
@@ -156,6 +158,16 @@ export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], s
     "",
   ].filter(l => l !== "")
 
+  // writer-brief.md step 4 — per-novel genre/tone file (style.md). Rendered
+  // verbatim after the header block and before SCENE CONTRACT, for every
+  // scene. Absence (null/blank) means no section at all — no fabricated or
+  // empty section, no fallback to the era primer.
+  if (style && style.trim().length > 0) {
+    lines.push("STYLE:")
+    lines.push(style.trim())
+    lines.push("")
+  }
+
   const dramatic = scene.dramatic ?? {}
   if (Object.keys(dramatic).length > 0) {
     lines.push("SCENE CONTRACT:")
@@ -173,7 +185,7 @@ export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], s
   }
 
   if (contract) {
-    // writer-brief.md step 9 — fact continuity anchors: the chapter's pinned
+    // writer-brief.md step 10 — fact continuity anchors: the chapter's pinned
     // schedule fact first, then canon facts resolved with ids retained.
     lines.push("FACT CONTINUITY ANCHORS:")
     lines.push(`  schedule: [id=${contract.schedule_fact.fact_id}] ${contract.schedule_fact.text}`)
@@ -185,7 +197,7 @@ export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], s
     }
     lines.push("")
 
-    // writer-brief.md step 10 — chapter-start character states, only for
+    // writer-brief.md step 11 — chapter-start character states, only for
     // characters present in this scene.
     lines.push("CONTINUITY ANCHORS:")
     const sceneChars = (scene.characters.length > 0 ? scene.characters : plan.characters_present).map(n => n.toLowerCase())
@@ -230,7 +242,7 @@ export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], s
   }
 
   if (contract) {
-    // writer-brief.md step 14 — reader info state (reveal discipline).
+    // writer-brief.md step 15 — reader info state (reveal discipline).
     lines.push("READER INFO STATE:")
     lines.push("  READER KNOWS:")
     const knownFacts = resolveFactRows(canon, contract.reader_info.knows_fact_ids)

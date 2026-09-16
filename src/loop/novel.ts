@@ -22,6 +22,9 @@ export interface NovelDir {
   base: string
   name: string
   seed: string | null
+  /** Optional per-novel genre/tone file (novels/<name>/style.md). null when
+   *  absent — the writer brief then renders no STYLE section (honest absence). */
+  style: string | null
   canon: Record<string, string>
   planPath: (n: number) => string
   chapterPath: (n: number) => string
@@ -52,6 +55,7 @@ export function openNovel(dirOrName: string): NovelDir {
     base,
     name,
     seed: existsSync(join(base, "seed.md")) ? readFileSync(join(base, "seed.md"), "utf-8") : null,
+    style: existsSync(join(base, "style.md")) ? readFileSync(join(base, "style.md"), "utf-8") : null,
     canon,
     planPath: n => join(base, "plan", `ch${String(n).padStart(2, "0")}.yaml`),
     chapterPath: n => join(base, "chapters", `ch${String(n).padStart(2, "0")}.md`),

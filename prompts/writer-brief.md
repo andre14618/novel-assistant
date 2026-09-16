@@ -29,47 +29,51 @@ the system prefix is what DeepSeek caches.
    Task: <description>
    Characters present: <names>
    ```
-4. **Scene load control** (when `mode` enables; `targetWords` guidance).
-5. **Scene contract brief** — rendered from `plan/chNN.yaml` scene entry
+4. **Style** (per-novel; implemented) — the novel's `novels/<name>/style.md`
+   genre/tone file (genre lane, register, cadence, voice properties), rendered
+   verbatim as a `STYLE:` block (see "Rendering (exact)"). Absent or blank
+   file → no section at all: honest absence, no fallback to the era primer.
+5. **Scene load control** (when `mode` enables; `targetWords` guidance).
+6. **Scene contract brief** — rendered from `plan/chNN.yaml` scene entry
    (fields per `prompts/planner-contract.md`; shape summary metrics:
    anchor/dramatic/endpoint/choice fields, from
    `src/agents/writer/scene-contract-shape.ts` — ported shape at
    `checks/contract-shape.ts`).
-6. **Source availability boundary** — from
+7. **Source availability boundary** — from
    `src/agents/writer/source-availability-checker.ts`: what the writer is
    allowed to reference (canon/seed material) vs boundary-redacted reveal
    terms. Rendered as a prose block with `[source-availability]` tags.
-7. **Authoring-bible scene slice** — rules whose `appliesWhen` matches this
+8. **Authoring-bible scene slice** — rules whose `appliesWhen` matches this
    scene (id-rendered; `suppress` hides Cluster-1 wildcard matches).
-8. **Obligations** — from the scene contract:
+9. **Obligations** — from the scene contract:
    ```
    OBLIGATIONS:
    - "<obligation text>" [obligationId=...]
    ```
-9. **Fact continuity anchors** (implemented) — from the plan's continuity
+10. **Fact continuity anchors** (implemented) — from the plan's continuity
    contract (version 1, below): the chapter's schedule fact first, then the
    canon facts pinned by `continuity_anchors.fact_ids`, resolved against
    `canon/facts.md` with IDs retained. Legacy plans render the
    legacy-unavailable marker instead (never fabricated state).
-10. **Continuity anchors** (implemented) — chapter-start character states
+11. **Continuity anchors** (implemented) — chapter-start character states
     from `continuity_anchors.character_states`, filtered to the characters
     present in this scene (same case-insensitive match as the CHARACTERS
     section). Legacy plans render the legacy-unavailable marker.
-11. **Character section brief** — character snapshots (name, capsule,
+12. **Character section brief** — character snapshots (name, capsule,
     relationship arcs present in scene).
-12. **Character context capsules** (mode-dependent) — capsules from
+13. **Character context capsules** (mode-dependent) — capsules from
     `src/agents/writer/character-context.ts` (character states →
     summaries/traces; render via `renderCharacterContextCapsules`).
-13. **Resolved references text** — cross-references resolved from canon
+14. **Resolved references text** — cross-references resolved from canon
     (id → text inlining, per `reference-resolver.ts`).
-14. **Reader info state** (implemented) — `READER KNOWS` /
+15. **Reader info state** (implemented) — `READER KNOWS` /
     `WITHHOLD FROM READER` from the plan's `reader_info`, fact IDs resolved
     against `canon/facts.md` (reveal discipline: a withheld fact must not
     also appear as reader-known — enforced by validation, not the renderer).
     Legacy plans render the legacy-unavailable marker.
-15. **Setting brief** — `settings` entry for the scene location
+16. **Setting brief** — `settings` entry for the scene location
     (world-bible file slice).
-16. **Beat target** — the `chNN.md` assembled chapter target (only in
+17. **Beat target** — the `chNN.md` assembled chapter target (only in
     chapter-assembly mode; scene mode skips).
 
 ## Continuity contract (version 1) — plan fields the brief renders
@@ -124,11 +128,14 @@ reader_info:
 
 ### Rendering (exact)
 
-Stable order for the implemented surface: header (3) → scene contract (5)
-→ obligations (8) → `FACT CONTINUITY ANCHORS` (9) → `CONTINUITY ANCHORS`
-(10) → `CHARACTERS` (11) → `READER INFO STATE` (14).
+Stable order for the implemented surface: header (3) → STYLE (4) → scene
+contract (6) → obligations (9) → `FACT CONTINUITY ANCHORS` (10) →
+`CONTINUITY ANCHORS` (11) → `CHARACTERS` (12) → `READER INFO STATE` (15).
 
 ```
+STYLE:
+<exact content of novels/<name>/style.md, surrounding whitespace trimmed>
+
 FACT CONTINUITY ANCHORS:
   schedule: [id=<schedule_fact.fact_id>] <schedule_fact.text>
   - [id=fact-1] <fact text resolved from canon/facts.md>
@@ -151,6 +158,16 @@ READER INFO STATE:
 
 Rules:
 
+- `STYLE` renders only when the novel carries a nonblank `style.md`. The
+  header line is `STYLE:`, followed by the file's content trimmed of
+  surrounding whitespace (internal line structure preserved verbatim). It is
+  emitted after the header block (step 3) and before `SCENE CONTRACT`, for
+  every scene of the chapter, and is followed by a blank separator line.
+  When `style.md` is absent or blank the section is omitted entirely — no
+  header, no placeholder, no fallback to `style-primer-salvatore.md`
+  (honest absence, consistent with the legacy-continuity marker). This keeps
+  the brief byte-identical to the pre-style output for novels without a
+  style file.
 - `FACT CONTINUITY ANCHORS` renders the schedule line first, then one line
   per `continuity_anchors.fact_ids` entry in plan order; IDs retained.
   Empty `fact_ids` renders `(none)` on its own line (the schedule line is
@@ -182,7 +199,9 @@ Rules:
 - `prompts/writer/beat-writer-system.md` — beat-level writer system prompt
 - `prompts/writer/prose-writer-system.md` — prose-level writer system prompt
 - `prompts/writer/style-primer-salvatore.md` — Salvatore style primer (genre
-  voice exemplar; era-specific, per-novel primers replace it)
+  voice exemplar; era-specific). This is the reference template for authoring
+  per-novel `novels/<name>/style.md` files, which render into the brief as the
+  `STYLE:` section (step 4).
 - `prompts/writer/voice-shaping.md` — extracted D1/D2/D3 voice-shaping
   fragments (`src/agents/writer/voice-shaping-prompts.ts`, ablation-only lane)
 
@@ -198,3 +217,4 @@ Rules:
 | `getOpenIssues` | `state.md` → open threads |
 | retrieval / embeddings | dropped — files + exact-match reference resolver only |
 | `getStorySpine` | `seed.md` story ask |
+| style primer / genre voice | `novels/<name>/style.md` (per-novel; renders as the `STYLE:` section, step 4) |

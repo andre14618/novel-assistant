@@ -1,0 +1,235 @@
+===== SCENE 0 =====
+WRITER DRAFTING BRIEF
+Scene: 1 of 5
+Budget: about 400 words
+POV: Alory Vane
+Setting: Guild tower room, Vellin
+Kind: confrontation
+Scene ID: ch7-s1
+Beat ID: b1
+Task: Alory confronts Elara in the tower room about the four-degree discrepancy between her survey bearing of forty-seven degrees and the previous map's forty-three
+Characters present: Alory Vane, Elara Venn
+SCENE CONTRACT:
+  goal: Alory forces Elara to explain the discrepancy
+  opposition: Elara's authority and the offer she controls
+  turning_point: Elara names the degree of the Guild's knowledge
+  crisis_choice: accept the sealed appointment or refuse
+  choice_alternatives: sign the offer,walk out,demand the journal
+  outcome: Alory refuses; the offer stays unsigned
+  consequence: Elara marks Alory for interception
+  pov_personal_stake: Alory's truth vs her survival
+  value_in: justice for Therin
+  value_out: isolation and pursuit
+  endpoint: Alory refuses
+
+OBLIGATIONS:
+- "enact the scene's confrontation beat" [obligationId=ch1-s1-o1]
+
+FACT CONTINUITY ANCHORS:
+  schedule: [id=schedule-ch01] The chapter opens on the evening three days after the ford survey; all scene dates resolve against that evening.
+  - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+
+CONTINUITY ANCHORS:
+  Alory Vane:
+    location: Guild tower room, Vellin
+    emotional: determined, wary
+    knows:
+      - her survey bearing of forty-seven degrees
+      - the previous map's forty-three-degree bearing
+    does not know:
+      - the Thornwood order
+
+READER INFO STATE:
+  READER KNOWS:
+    - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+  WITHHOLD FROM READER:
+    - [id=fact-2] Master Therin died in the river after mapping the northern ford; official report: drowning.
+
+===== SCENE 1 =====
+WRITER DRAFTING BRIEF
+Scene: 2 of 5
+Budget: about 400 words
+POV: Alory Vane
+Setting: Guild tower room, Vellin
+Kind: confrontation
+Scene ID: ch7-s2
+Beat ID: b2
+Task: Elara offers Alory a Guild appointment with a seal and blank signature lines, shifting the conversation from bearings to offers and the Guild seal
+Characters present: Alory Vane, Elara Venn
+SCENE CONTRACT:
+  goal: Elara pivots from bearings to leverage
+  opposition: Alory refuses the appointment
+  turning_point: the Guild seal changes the room
+  crisis_choice: take the seal or name the cost
+  choice_alternatives: accept the seal,demand the journal,name a price
+  outcome: Alory demands the journal
+  consequence: Elara names Therin as the reason
+  pov_personal_stake: the weight of the Guild seal
+  value_in: standing
+  value_out: marked as dangerous
+  endpoint: Alory demands the journal
+
+OBLIGATIONS:
+- "enact the scene's confrontation beat" [obligationId=ch1-s2-o1]
+
+FACT CONTINUITY ANCHORS:
+  schedule: [id=schedule-ch01] The chapter opens on the evening three days after the ford survey; all scene dates resolve against that evening.
+  - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+
+CONTINUITY ANCHORS:
+  Alory Vane:
+    location: Guild tower room, Vellin
+    emotional: determined, wary
+    knows:
+      - her survey bearing of forty-seven degrees
+      - the previous map's forty-three-degree bearing
+    does not know:
+      - the Thornwood order
+
+READER INFO STATE:
+  READER KNOWS:
+    - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+  WITHHOLD FROM READER:
+    - [id=fact-2] Master Therin died in the river after mapping the northern ford; official report: drowning.
+
+===== SCENE 2 =====
+WRITER DRAFTING BRIEF
+Scene: 3 of 5
+Budget: about 400 words
+POV: Alory Vane
+Setting: Guild tower room, Vellin
+Kind: confrontation
+Scene ID: ch7-s3
+Beat ID: b3
+Task: Alory recounts Master Therin's death at the northern ford after he measured a discrepancy, and states that the Guild moved the boundary stone and re-set it with fresh earth
+Characters present: Alory Vane, Elara Venn
+SCENE CONTRACT:
+  goal: Alory states what happened to Therin
+  opposition: Elara's denials
+  turning_point: the four-degree reading
+  crisis_choice: publish or bury the measurement
+  choice_alternatives: publish,bury,verify privately
+  outcome: Elara concedes the stone was moved
+  consequence: the truth is now spoken aloud
+  pov_personal_stake: Therin's death must mean something
+  value_in: justice
+  value_out: grief made actionable
+  endpoint: Elara concedes
+
+OBLIGATIONS:
+- "enact the scene's confrontation beat" [obligationId=ch1-s3-o1]
+
+FACT CONTINUITY ANCHORS:
+  schedule: [id=schedule-ch01] The chapter opens on the evening three days after the ford survey; all scene dates resolve against that evening.
+  - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+
+CONTINUITY ANCHORS:
+  Alory Vane:
+    location: Guild tower room, Vellin
+    emotional: determined, wary
+    knows:
+      - her survey bearing of forty-seven degrees
+      - the previous map's forty-three-degree bearing
+    does not know:
+      - the Thornwood order
+
+READER INFO STATE:
+  READER KNOWS:
+    - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+  WITHHOLD FROM READER:
+    - [id=fact-2] Master Therin died in the river after mapping the northern ford; official report: drowning.
+
+===== SCENE 3 =====
+WRITER DRAFTING BRIEF
+Scene: 4 of 5
+Budget: about 400 words
+POV: Alory Vane
+Setting: Guild tower room, Vellin
+Kind: confrontation
+Scene ID: ch7-s4
+Beat ID: b4
+Task: Elara explains the Guild's intent about the northern border, the Crown's surveyors, and the truth their maps would have revealed, asking Alory to burn her journal
+Characters present: Alory Vane, Elara Venn
+SCENE CONTRACT:
+  goal: Elara frames the Guild's intent
+  opposition: Alory's refusal to burn her journal
+  turning_point: the Crown's surveyors would find it
+  crisis_choice: burn the journal or keep it
+  choice_alternatives: burn it,keep it
+  outcome: Alory keeps the journal
+  consequence: the north is now contested
+  pov_personal_stake: proof vs peace
+  value_in: truth
+  value_out: a contested border
+  endpoint: Alory keeps the journal
+
+OBLIGATIONS:
+- "enact the scene's confrontation beat" [obligationId=ch1-s4-o1]
+
+FACT CONTINUITY ANCHORS:
+  schedule: [id=schedule-ch01] The chapter opens on the evening three days after the ford survey; all scene dates resolve against that evening.
+  - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+
+CONTINUITY ANCHORS:
+  Alory Vane:
+    location: Guild tower room, Vellin
+    emotional: determined, wary
+    knows:
+      - her survey bearing of forty-seven degrees
+      - the previous map's forty-three-degree bearing
+    does not know:
+      - the Thornwood order
+
+READER INFO STATE:
+  READER KNOWS:
+    - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+  WITHHOLD FROM READER:
+    - [id=fact-2] Master Therin died in the river after mapping the northern ford; official report: drowning.
+
+===== SCENE 4 =====
+WRITER DRAFTING BRIEF
+Scene: 5 of 5
+Budget: about 400 words
+POV: Alory Vane
+Setting: Guild tower room, Vellin
+Kind: confrontation
+Scene ID: ch7-s5
+Beat ID: b5
+Task: Alory refuses the offer and leaves; Elara opens the window and orders the Thornwood posts to take Alory alive and marks Renn of Hollow's Rest expendable
+Characters present: Alory Vane, Elara Venn
+SCENE CONTRACT:
+  goal: Alory leaves; Elara closes the room
+  opposition: the court Alory threatens
+  turning_point: the Thornwood order
+  crisis_choice: take her alive or not at all
+  choice_alternatives: take alive,expendable
+  outcome: Alory is taken alive if possible
+  consequence: Renn of Hollow's Rest is expendable
+  pov_personal_stake: the price of testimony
+  value_in: mercy
+  value_out: the land remembers
+  endpoint: Alory leaves
+
+OBLIGATIONS:
+- "enact the scene's confrontation beat" [obligationId=ch1-s5-o1]
+
+FACT CONTINUITY ANCHORS:
+  schedule: [id=schedule-ch01] The chapter opens on the evening three days after the ford survey; all scene dates resolve against that evening.
+  - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+
+CONTINUITY ANCHORS:
+  Alory Vane:
+    location: Guild tower room, Vellin
+    emotional: determined, wary
+    knows:
+      - her survey bearing of forty-seven degrees
+      - the previous map's forty-three-degree bearing
+    does not know:
+      - the Thornwood order
+
+READER INFO STATE:
+  READER KNOWS:
+    - [id=fact-1] The Guild's official record of the northern border shows 43 degrees from Sentinel Peak to the northern ford.
+  WITHHOLD FROM READER:
+    - [id=fact-2] Master Therin died in the river after mapping the northern ford; official report: drowning.
+

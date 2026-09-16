@@ -119,7 +119,7 @@ export async function draftStep(novel: NovelDir, n: number, opts: StepOptions): 
   const system = readPrompt("writer/beat-writer-system.md")
   const sceneProses: string[] = []
   for (let i = 0; i < plan.scenes.length; i++) {
-    const brief = renderWriterBrief(plan, novel.canon, i)
+    const brief = renderWriterBrief(plan, novel.canon, i, novel.style)
     const outcome = await callLLM({
       agent: "writer",
       systemPrompt: system,
