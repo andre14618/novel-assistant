@@ -16,6 +16,12 @@ export function readPrompt(path: string): string {
   return readFileSync(resolve(PROMPT_DIR, path), "utf-8")
 }
 
+/** One beat-level chapter-plan contract; never mix in the contradictory
+ * whole-arc skeleton prompt, which explicitly forbids scene detail. */
+export function renderPlannerSystem(): string {
+  return readPrompt("planner-contract.md")
+}
+
 // ── Canon facts ────────────────────────────────────────────────────────────
 
 export interface FactRow {

@@ -4,6 +4,8 @@ Horizon = 1 chapter. The planner agent reads `canon/` + `feedback/` +
 `LESSONS.md` + `state.md` and writes one file per chapter. Scene contracts
 keep the L095/L110 contract shape (obligations + endpoints); the proposal
 drops proposal-envelope surfaces — dispositions in `feedback/` replace them.
+Respond with only one valid YAML document matching the file shape below. Do not
+wrap it in Markdown fences or return the whole-arc `chapters` JSON shape.
 
 Adapted from `src/agents/writer/scene-contract-shape.ts` (field inventory)
 and the planner prompt stack (`prompts/planner/chapter-outline-system.md`,
@@ -60,7 +62,7 @@ character_state_changes:
 # Continuity contract (version 1) — required on all generated plans (L-2):
 continuity_contract_version: 1
 schedule_fact:
-  fact_id: schedule-ch7     # ID the chapter will establish in canon/facts.md
+  fact_id: schedule-ch7     # stable plan-local trace ID for this schedule anchor
   text: "The sealed appointment is due at the bell on the ninth day."
 continuity_anchors:
   fact_ids: [fact-1]        # canon/facts.md IDs this chapter must not contradict
@@ -86,9 +88,9 @@ present in the scene) and `READER INFO STATE` (`READER KNOWS` /
 `WITHHOLD FROM READER`).
 
 - `continuity_contract_version: 1` — the only supported version.
-- `schedule_fact` — one explicit chapter schedule statement. `fact_id` is
-  the ID the chapter will establish in `canon/facts.md` (forward reference —
-  not yet in canon at plan time); `text` is the statement itself. Scenes
+- `schedule_fact` — one explicit chapter schedule statement. `fact_id` is a
+  stable plan-local trace ID for this schedule anchor; `text` is the statement
+  itself. It does not need to pre-exist in canon. Scenes
   carry relative dates resolved against it.
 - `continuity_anchors.fact_ids` — canon fact IDs this chapter must not
   contradict; each must resolve against `canon/facts.md`.

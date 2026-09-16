@@ -16,6 +16,7 @@ import {
   type NovelDir,
   type PlanChapter,
 } from "../src/loop/novel"
+import { renderPlannerSystem } from "../src/loop/context"
 
 /**
  * Focused tests: plan continuity contract (phase 5 backlog 2, LESSONS L-2).
@@ -85,6 +86,16 @@ function legacyPlan(): PlanChapter {
   }
 }
 
+describe("planner prompt", () => {
+  test("uses the beat-level YAML contract without the contradictory whole-arc shape", () => {
+    const system = renderPlannerSystem()
+    expect(system).toContain("continuity_contract_version: 1")
+    expect(system).toContain("only one valid YAML document")
+    expect(system).not.toContain('"chapters"')
+    expect(system).not.toContain("Do NOT include `scenes`")
+  })
+})
+
 describe("validateContinuityContract — complete valid data", () => {
   test("accepts a complete version-1 contract with resolvable fact IDs", () => {
     const plan = validPlan()
@@ -146,7 +157,7 @@ describe("validateContinuityContract — unknown fact IDs", () => {
     expect(errors[0]).toMatch(/'fact-88' not found in canon\/facts\.md/)
   })
 
-  test("schedule_fact.fact_id is a forward reference (not resolved against canon)", () => {
+  test("schedule_fact.fact_id is plan-local (not resolved against canon)", () => {
     // The schedule fact is established BY this chapter; its ID is not in
     // canon yet and must not be rejected.
     expect(validateContinuityContract(validPlan(), CANON)).toEqual([])
@@ -232,7 +243,7 @@ describe("validateContinuityContract — malformed fields", () => {
 
     const plan3 = validPlan()
     plan3.schedule_fact = { fact_id: "  ", text: "ok" }
-    expect(validateContinuityContract(plan3, CANON).some(e => e.startsWith("schedule_fact.fact_id: must be a nonblank string"))).toBe(true)
+    expect(validateContinuityContract(plan3, CANON).some(e => e.startsWith("schedule_fact.fact_id: must be a nonblank plan-local trace ID"))).toBe(true)
 
     const plan4 = validPlan()
     delete (plan4.schedule_fact as Record<string, unknown>).text

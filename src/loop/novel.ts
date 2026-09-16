@@ -116,8 +116,8 @@ export interface PlanChapter {
 // characters only) and READER INFO STATE.
 
 export interface ScheduleFact {
-  /** ID the chapter will establish in canon/facts.md (forward reference —
-   *  not in canon at plan time, so not resolved against canon). */
+  /** Stable plan-local trace ID for this schedule anchor; it does not need
+   *  to pre-exist in canon/facts.md. */
   fact_id: string
   /** The one explicit schedule statement this chapter pins. */
   text: string
@@ -244,8 +244,8 @@ function duplicateEntries(list: string[]): string[] {
  *   the same ID twice, and knows and withhold must not overlap. Canon
  *   itself must carry unique fact IDs (explicit or implicit). Duplicate
  *   `character_states` entries for the same character (case-insensitive)
- *   fail. `schedule_fact.fact_id` is the ID the chapter will establish
- *   (forward reference), so only nonblank is required.
+ *   fail. `schedule_fact.fact_id` is a plan-local trace ID, so only
+ *   nonblankness is required.
  */
 export function validateContinuityContract(plan: PlanChapter, canon: NovelDir["canon"]): string[] {
   if (!hasContinuityContract(plan)) return []
@@ -271,7 +271,7 @@ export function validateContinuityContract(plan: PlanChapter, canon: NovelDir["c
   } else if (!isRecord(sf)) {
     errors.push("schedule_fact: must be a mapping with fact_id and text")
   } else {
-    if (!isNonblankString(sf.fact_id)) errors.push("schedule_fact.fact_id: must be a nonblank string (ID the chapter will establish in canon/facts.md)")
+    if (!isNonblankString(sf.fact_id)) errors.push("schedule_fact.fact_id: must be a nonblank plan-local trace ID")
     if (!isNonblankString(sf.text)) errors.push("schedule_fact.text: must be a nonblank string (the one explicit schedule statement)")
   }
 
