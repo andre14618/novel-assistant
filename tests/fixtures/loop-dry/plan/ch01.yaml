@@ -161,3 +161,25 @@ character_state_changes:
   - the Guild moved the boundary stone
   does_not_know:
   - the Thornwood order
+continuity_contract_version: 1
+schedule_fact:
+  fact_id: schedule-ch01
+  text: The chapter opens on the evening three days after the ford survey; all
+    scene dates resolve against that evening.
+continuity_anchors:
+  fact_ids:
+  - fact-1
+  character_states:
+  - character: Alory Vane
+    location: Guild tower room, Vellin
+    emotional: determined, wary
+    knows:
+    - her survey bearing of forty-seven degrees
+    - the previous map's forty-three-degree bearing
+    does_not_know:
+    - the Thornwood order
+reader_info:
+  knows_fact_ids:
+  - fact-1
+  withhold_fact_ids:
+  - fact-2
