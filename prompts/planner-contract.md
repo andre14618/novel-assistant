@@ -100,10 +100,11 @@ present in the scene) and `READER INFO STATE` (`READER KNOWS` /
 
 Validation (fail closed, before any LLM drafting): when any contract field
 is present, the whole version-1 contract is required — missing sections,
-unknown fact IDs, blank required strings, wrong array shapes, or
-knows/withhold overlap are plan errors. Legacy plans without any contract
-field remain readable; generated plans must carry a complete contract (the
-plan step enforces required mode before writing).
+unknown fact IDs, duplicate fact IDs (within a list or in canon/facts.md),
+duplicate character anchors (case-insensitive), blank required strings,
+wrong array shapes, or knows/withhold overlap are plan errors. Legacy plans
+without any contract field remain readable; generated plans must carry a
+complete contract (the plan step enforces required mode before writing).
 
 ## Field inventory (from scene-contract-shape.ts)
 

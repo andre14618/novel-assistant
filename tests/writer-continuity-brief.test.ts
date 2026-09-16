@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test"
 import { readFileSync, readdirSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { parse } from "yaml"
-import { renderWriterBrief, validatePlanContinuity, type ContinuityContract } from "../src/loop/context"
-import type { NovelDir, PlanChapter } from "../src/loop/novel"
+import { renderWriterBrief } from "../src/loop/context"
+import { validatePlanContinuity, type CharacterStateAnchor, type ContinuityContractV1, type NovelDir, type PlanChapter } from "../src/loop/novel"
 
 /**
  * Phase-5 backlog item 2 (LESSONS L-2): the writer brief renders fact
@@ -76,7 +76,7 @@ function basePlan(): PlanChapter {
   }
 }
 
-function baseContract(): ContinuityContract {
+function baseContract(): ContinuityContractV1 {
   return {
     continuity_contract_version: 1,
     schedule_fact: { fact_id: "schedule-ch1", text: "The marker sale is on the fourteenth day, at the contract bell." },
@@ -109,14 +109,22 @@ function planWithContract(mutate?: (c: ContinuityContract) => void): PlanChapter
   return { ...basePlan(), ...contract }
 }
 
+/** Find the position of a section header at the start of its line
+ *  (so "CONTINUITY ANCHORS:" never matches inside "FACT CONTINUITY ANCHORS:"). */
+function headerPos(brief: string, header: string): number {
+  const re = new RegExp(`^\\s*${header.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "m")
+  const m = brief.match(re)
+  return m ? m.index! : -1
+}
+
 /** Slice the brief between two section headers (end header optional). */
 function section(brief: string, header: string, endHeader?: string): string {
-  const start = brief.indexOf(header)
+  const start = headerPos(brief, header)
   expect(start, `section header '${header}' missing`).toBeGreaterThanOrEqual(0)
   let end = brief.length
   if (endHeader !== undefined) {
-    const next = brief.indexOf(endHeader, start + header.length)
-    if (next >= 0) end = next
+    const next = headerPos(brief.slice(start + header.length), endHeader)
+    if (next >= 0) end = start + header.length + next
   }
   return brief.slice(start, end)
 }
@@ -147,21 +155,21 @@ describe("validatePlanContinuity", () => {
     const plan = planWithContract(c => { c.continuity_anchors.fact_ids = ["fact-1", "fact-99"] })
     const res = validatePlanContinuity(plan, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("unknown canon fact id 'fact-99'")
+    expect(res.errors.join(" ")).toContain("continuity_anchors.fact_ids[1]: 'fact-99' not found in canon/facts.md")
   })
 
   test("unknown fact id in reader_info fails", () => {
     const plan = planWithContract(c => { c.reader_info.knows_fact_ids = ["fact-40"] })
     const res = validatePlanContinuity(plan, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("reader_info.knows_fact_ids references unknown canon fact id 'fact-40'")
+    expect(res.errors.join(" ")).toContain("reader_info.knows_fact_ids[0]: 'fact-40' not found in canon/facts.md")
   })
 
   test("reader knows/withhold overlap fails", () => {
     const plan = planWithContract(c => { c.reader_info = { knows_fact_ids: ["fact-1"], withhold_fact_ids: ["fact-1"] } })
     const res = validatePlanContinuity(plan, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("appear in both knows_fact_ids and withhold_fact_ids")
+    expect(res.errors.join(" ")).toContain("knows_fact_ids and withhold_fact_ids overlap — withheld facts must not also be reader-known: fact-1")
   })
 
   test("missing schedule_fact fails (partial version-1)", () => {
@@ -169,7 +177,7 @@ describe("validatePlanContinuity", () => {
     delete (plan as Record<string, unknown>).schedule_fact
     const res = validatePlanContinuity(plan, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("schedule_fact must be an object")
+    expect(res.errors.join(" ")).toContain("schedule_fact missing")
   })
 
   test("missing reader_info fails (partial version-1)", () => {
@@ -177,17 +185,17 @@ describe("validatePlanContinuity", () => {
     delete (plan as Record<string, unknown>).reader_info
     const res = validatePlanContinuity(plan, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("reader_info must be an object")
+    expect(res.errors.join(" ")).toContain("reader_info missing")
   })
 
   test("wrong or missing version fails when any contract field is present", () => {
-    const wrongVersion = planWithContract(c => { c.continuity_contract_version = 2 })
+    const wrongVersion = planWithContract(c => { c.continuity_contract_version = 2 as unknown as 1 })
     expect(validatePlanContinuity(wrongVersion, CANON, { required: false }).ok).toBe(false)
     const noVersion = planWithContract()
     delete (noVersion as Record<string, unknown>).continuity_contract_version
     const res = validatePlanContinuity(noVersion, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("continuity_contract_version must be 1")
+    expect(res.errors.join(" ")).toContain("continuity_contract_version missing")
   })
 
   test("blank required strings fail", () => {
@@ -196,7 +204,7 @@ describe("validatePlanContinuity", () => {
     const blankLoc = planWithContract(c => { c.continuity_anchors.character_states[0]!.location = "" })
     const res = validatePlanContinuity(blankLoc, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("character_states[0].location must be a nonblank string")
+    expect(res.errors.join(" ")).toContain("continuity_anchors.character_states[0].location: must be a nonblank string")
   })
 
   test("malformed shapes fail (arrays, entries, objects)", () => {
@@ -206,15 +214,15 @@ describe("validatePlanContinuity", () => {
     const numericEntry = planWithContract(c => { c.continuity_anchors.fact_ids = ["fact-1", 42 as unknown as string] })
     const res = validatePlanContinuity(numericEntry, CANON, { required: false })
     expect(res.ok).toBe(false)
-    expect(res.errors.join(" ")).toContain("entries must be nonblank strings")
+    expect(res.errors.join(" ")).toContain("continuity_anchors.fact_ids[1]: must be a nonblank string")
 
-    const statesString = planWithContract(c => { c.continuity_anchors.character_states = "nope" as unknown as ContinuityContract["continuity_anchors"]["character_states"] })
+    const statesString = planWithContract(c => { c.continuity_anchors.character_states = "nope" as unknown as CharacterStateAnchor[] })
     expect(validatePlanContinuity(statesString, CANON, { required: false }).ok).toBe(false)
 
     const knowsString = planWithContract(c => { c.continuity_anchors.character_states[0]!.knows = "knows" as unknown as string[] })
     const res2 = validatePlanContinuity(knowsString, CANON, { required: false })
     expect(res2.ok).toBe(false)
-    expect(res2.errors.join(" ")).toContain("character_states[0].knows must be an array of nonblank strings")
+    expect(res2.errors.join(" ")).toContain("continuity_anchors.character_states[0].knows: must be an array of nonblank strings")
   })
 })
 
@@ -235,8 +243,8 @@ describe("renderWriterBrief with a version-1 contract", () => {
       "WITHHOLD FROM READER:",
     ]
     for (let i = 0; i < order.length - 1; i++) {
-      const a = brief.indexOf(order[i]!)
-      const b = brief.indexOf(order[i + 1]!)
+      const a = headerPos(brief, order[i]!)
+      const b = headerPos(brief, order[i + 1]!)
       expect(a, `section '${order[i]}' missing`).toBeGreaterThanOrEqual(0)
       expect(b, `section '${order[i + 1]}' missing`).toBeGreaterThanOrEqual(0)
       expect(a, `'${order[i]}' must precede '${order[i + 1]}'`).toBeLessThan(b)
@@ -321,7 +329,7 @@ describe("renderWriterBrief with a version-1 contract", () => {
     delete (partial as Record<string, unknown>).reader_info
     expect(() => renderWriterBrief(partial, CANON, 0)).toThrow(/invalid continuity contract/)
     const unknownId = planWithContract(c => { c.reader_info.withhold_fact_ids = ["fact-99"] })
-    expect(() => renderWriterBrief(unknownId, CANON, 0)).toThrow(/unknown canon fact id 'fact-99'/)
+    expect(() => renderWriterBrief(unknownId, CANON, 0)).toThrow(/'fact-99' not found in canon\/facts\.md/)
   })
 })
 
@@ -365,12 +373,15 @@ describe("renderWriterBrief with legacy plans (no continuity contract)", () => {
     }
   })
 
-  test("loop-dry fixture plan still renders (legacy, all scenes)", () => {
+  test("loop-dry fixture plan renders the v1 continuity sections (all scenes)", () => {
     const { plan, canon } = loadFixtureNovel("./fixtures/loop-dry")
-    expect(validatePlanContinuity(plan, canon, { required: false }).ok).toBe(true)
+    expect(validatePlanContinuity(plan, canon, { required: true }).ok).toBe(true)
     for (let i = 0; i < plan.scenes.length; i++) {
       const brief = renderWriterBrief(plan, canon, i)
-      expect(brief).toContain(LEGACY_MARKER)
+      expect(brief).toContain("FACT CONTINUITY ANCHORS:")
+      expect(brief).toContain("CONTINUITY ANCHORS:")
+      expect(brief).toContain("READER INFO STATE:")
+      expect(brief).not.toContain(LEGACY_MARKER)
     }
   })
 })

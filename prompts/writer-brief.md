@@ -103,13 +103,17 @@ reader_info:
 - `schedule_fact.fact_id` / `schedule_fact.text`: nonblank strings; `text`
   is the single explicit schedule statement for the chapter.
 - `continuity_anchors.fact_ids`: string array; every ID must resolve to a
-  row in `canon/facts.md` (unknown ID → fail).
+  row in `canon/facts.md` (unknown ID → fail); no ID may be listed twice.
 - `continuity_anchors.character_states`: array; each entry has nonblank
   `character` / `location` / `emotional`; `knows` / `does_not_know` are
-  string arrays (may be empty).
+  string arrays (may be empty); the same character may not be anchored
+  twice (case-insensitive).
 - `reader_info.knows_fact_ids` / `withhold_fact_ids`: string arrays; every
-  ID resolves against `canon/facts.md`; the two must not overlap (a
-  withheld fact may not also be reader-known).
+  ID resolves against `canon/facts.md`; no ID may be listed twice within
+  one list; the two must not overlap (a withheld fact may not also be
+  reader-known).
+- `canon/facts.md` itself must carry unique fact IDs (explicit or
+  implicit) — duplicate canon IDs fail validation.
 - Any new field or version present → the whole contract is required and
   validated; partial version-1 data is never silently accepted.
 - Generated/new plans (planner output) must be version 1 — the plan step
@@ -126,7 +130,7 @@ Stable order for the implemented surface: header (3) → scene contract (5)
 
 ```
 FACT CONTINUITY ANCHORS:
-  schedule: <schedule_fact.text> [factId=<schedule_fact.fact_id>]
+  schedule: [id=<schedule_fact.fact_id>] <schedule_fact.text>
   - [id=fact-1] <fact text resolved from canon/facts.md>
 
 CONTINUITY ANCHORS:
@@ -135,7 +139,7 @@ CONTINUITY ANCHORS:
     emotional: <chapter-start emotional state>
     knows:
       - <known item>
-    does_not_know:
+    does not know:
       - <withheld item>
 
 READER INFO STATE:
@@ -159,10 +163,11 @@ Rules:
 - `READER INFO STATE` always renders both subsections; an empty list
   renders `(none)` under that subsection.
 - Empty lists render an honest `(none)` rather than disappearing.
-- Legacy plans (no contract fields): each of the three sections renders its
-  header plus the marker line
-  `  (unavailable: legacy plan, no continuity contract)` — never
-  fabricated state.
+- Legacy plans (no contract fields): the continuity slot (between
+  `OBLIGATIONS` and `CHARACTERS`) renders the single concise marker line
+  `CONTINUITY: (legacy plan — no continuity contract; continuity anchors
+  and reader-info state unavailable)` — never fabricated state; the three
+  section headers are not rendered.
 
 ## Mode notes
 

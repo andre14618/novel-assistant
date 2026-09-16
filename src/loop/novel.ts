@@ -174,7 +174,7 @@ export function readPlan(novel: NovelDir, n: number): PlanChapter {
   // Legacy plans (no continuity-contract fields) stay readable. Any opted-in
   // contract is validated against canon/facts.md before the plan reaches a
   // step — fail closed on partial/malformed version-1 data.
-  assertContinuityContract(plan, canonFactIds(novel.canon))
+  assertContinuityContract(plan, novel.canon)
   return plan
 }
 
@@ -189,7 +189,7 @@ const CONTRACT_KEYS = [
 
 /** True when the plan opts into the continuity contract (any contract key present). */
 export function hasContinuityContract(plan: PlanChapter): boolean {
-  const p = plan as Record<string, unknown>
+  const p = plan as unknown as Record<string, unknown>
   return CONTRACT_KEYS.some(k => p[k] !== undefined)
 }
 
@@ -221,28 +221,48 @@ function isNonblankString(v: unknown): v is string {
   return typeof v === "string" && v.trim().length > 0
 }
 
+/** Entries of `list` that occur more than once (first-seen order). */
+function duplicateEntries(list: string[]): string[] {
+  const seen = new Set<string>()
+  const dups = new Set<string>()
+  for (const entry of list) {
+    if (seen.has(entry)) dups.add(entry)
+    else seen.add(entry)
+  }
+  return [...dups]
+}
+
 /**
- * Validate the plan's continuity contract against canon fact IDs.
+ * Validate the plan's continuity contract against the novel's canon.
  * Returns all errors (empty = valid); does not throw.
  *
  * - No contract keys at all → legacy plan: always valid here (readable).
  * - Any contract key present → the whole version-1 contract is required:
  *   `continuity_contract_version: 1` + `schedule_fact` + `continuity_anchors`
  *   + `reader_info`, all well-formed. `fact_ids` / `knows_fact_ids` /
- *   `withhold_fact_ids` must resolve against canon/facts.md; knows and
- *   withhold must not overlap. `schedule_fact.fact_id` is the ID the
- *   chapter will establish (forward reference), so only nonblank is required.
+ *   `withhold_fact_ids` must resolve against canon/facts.md, must not list
+ *   the same ID twice, and knows and withhold must not overlap. Canon
+ *   itself must carry unique fact IDs (explicit or implicit). Duplicate
+ *   `character_states` entries for the same character (case-insensitive)
+ *   fail. `schedule_fact.fact_id` is the ID the chapter will establish
+ *   (forward reference), so only nonblank is required.
  */
-export function validateContinuityContract(plan: PlanChapter, knownFactIds: ReadonlySet<string>): string[] {
+export function validateContinuityContract(plan: PlanChapter, canon: NovelDir["canon"]): string[] {
   if (!hasContinuityContract(plan)) return []
   const errors: string[] = []
-  const p = plan as Record<string, unknown>
+  const p = plan as unknown as Record<string, unknown>
 
   const version = p["continuity_contract_version"]
   if (version === undefined) {
     errors.push("continuity_contract_version missing — when any continuity-contract field is present the whole version-1 contract is required")
   } else if (version !== 1) {
     errors.push(`continuity_contract_version: unsupported version ${JSON.stringify(version)} (supported: 1)`)
+  }
+
+  const canonIds = extractFactIds(canon["facts.md"] ?? "")
+  const knownFactIds = new Set(canonIds)
+  for (const dup of duplicateEntries(canonIds)) {
+    errors.push(`canon/facts.md: fact id '${dup}' appears on multiple rows — canon fact IDs must be unique`)
   }
 
   const sf = p["schedule_fact"]
@@ -255,29 +275,38 @@ export function validateContinuityContract(plan: PlanChapter, knownFactIds: Read
     if (!isNonblankString(sf.text)) errors.push("schedule_fact.text: must be a nonblank string (the one explicit schedule statement)")
   }
 
+  const checkFactIdList = (label: string, ids: unknown): void => {
+    if (ids === undefined) {
+      errors.push(`${label}: missing (array of canon fact IDs; [] allowed)`)
+      return
+    }
+    if (!Array.isArray(ids)) {
+      errors.push(`${label}: must be an array of canon fact IDs`)
+      return
+    }
+    const seen = new Set<string>()
+    ids.forEach((id, i) => {
+      if (!isNonblankString(id)) errors.push(`${label}[${i}]: must be a nonblank string`)
+      else if (!knownFactIds.has(id)) errors.push(`${label}[${i}]: '${id}' not found in canon/facts.md`)
+      else if (seen.has(id)) errors.push(`${label}[${i}]: '${id}' is listed more than once`)
+      else seen.add(id)
+    })
+  }
+
   const ca = p["continuity_anchors"]
   if (ca === undefined) {
     errors.push("continuity_anchors missing — required: fact_ids + character_states")
   } else if (!isRecord(ca)) {
     errors.push("continuity_anchors: must be a mapping with fact_ids and character_states")
   } else {
-    const fids = ca.fact_ids
-    if (fids === undefined) {
-      errors.push("continuity_anchors.fact_ids: missing (array of canon fact IDs; [] allowed)")
-    } else if (!Array.isArray(fids)) {
-      errors.push("continuity_anchors.fact_ids: must be an array of canon fact IDs")
-    } else {
-      fids.forEach((id, i) => {
-        if (!isNonblankString(id)) errors.push(`continuity_anchors.fact_ids[${i}]: must be a nonblank string`)
-        else if (!knownFactIds.has(id)) errors.push(`continuity_anchors.fact_ids[${i}]: '${id}' not found in canon/facts.md`)
-      })
-    }
+    checkFactIdList("continuity_anchors.fact_ids", ca.fact_ids)
     const states = ca.character_states
     if (states === undefined) {
       errors.push("continuity_anchors.character_states: missing (array of chapter-start character states; [] allowed)")
     } else if (!Array.isArray(states)) {
       errors.push("continuity_anchors.character_states: must be an array")
     } else {
+      const seenChars = new Set<string>()
       states.forEach((st, i) => {
         if (!isRecord(st)) {
           errors.push(`continuity_anchors.character_states[${i}]: must be a mapping with character/location/emotional/knows/does_not_know`)
@@ -285,6 +314,11 @@ export function validateContinuityContract(plan: PlanChapter, knownFactIds: Read
         }
         for (const key of ["character", "location", "emotional"] as const) {
           if (!isNonblankString(st[key])) errors.push(`continuity_anchors.character_states[${i}].${key}: must be a nonblank string`)
+        }
+        if (isNonblankString(st.character)) {
+          const norm = st.character.trim().toLowerCase()
+          if (seenChars.has(norm)) errors.push(`continuity_anchors.character_states[${i}]: character '${st.character}' is already anchored (case-insensitive duplicate)`)
+          else seenChars.add(norm)
         }
         for (const key of ["knows", "does_not_know"] as const) {
           const v = st[key]
@@ -301,19 +335,8 @@ export function validateContinuityContract(plan: PlanChapter, knownFactIds: Read
   } else if (!isRecord(ri)) {
     errors.push("reader_info: must be a mapping with knows_fact_ids and withhold_fact_ids")
   } else {
-    for (const key of ["knows_fact_ids", "withhold_fact_ids"] as const) {
-      const v = ri[key]
-      if (v === undefined) {
-        errors.push(`reader_info.${key}: missing (array of canon fact IDs; [] allowed)`)
-      } else if (!Array.isArray(v)) {
-        errors.push(`reader_info.${key}: must be an array of canon fact IDs`)
-      } else {
-        v.forEach((id, i) => {
-          if (!isNonblankString(id)) errors.push(`reader_info.${key}[${i}]: must be a nonblank string`)
-          else if (!knownFactIds.has(id)) errors.push(`reader_info.${key}[${i}]: '${id}' not found in canon/facts.md`)
-        })
-      }
-    }
+    checkFactIdList("reader_info.knows_fact_ids", ri.knows_fact_ids)
+    checkFactIdList("reader_info.withhold_fact_ids", ri.withhold_fact_ids)
     const knows = Array.isArray(ri.knows_fact_ids) ? ri.knows_fact_ids : []
     const withholds = Array.isArray(ri.withhold_fact_ids) ? ri.withhold_fact_ids : []
     const overlap = [...new Set(knows.filter(isNonblankString))].filter(id => withholds.includes(id))
@@ -329,8 +352,8 @@ export function validateContinuityContract(plan: PlanChapter, knownFactIds: Read
  * Throw when the plan's continuity contract is present but invalid.
  * Legacy plans (no contract keys) pass through and return null.
  */
-export function assertContinuityContract(plan: PlanChapter, knownFactIds: ReadonlySet<string>): ContinuityContractV1 | null {
-  const errors = validateContinuityContract(plan, knownFactIds)
+export function assertContinuityContract(plan: PlanChapter, canon: NovelDir["canon"]): ContinuityContractV1 | null {
+  const errors = validateContinuityContract(plan, canon)
   if (errors.length > 0) {
     throw new Error(`invalid continuity contract:\n  - ${errors.join("\n  - ")}`)
   }
@@ -342,11 +365,44 @@ export function assertContinuityContract(plan: PlanChapter, knownFactIds: Readon
  * generated plan: the plan must carry a complete, valid version-1
  * continuity contract. Contractless (legacy) plans fail closed here.
  */
-export function assertRequiredContinuityContract(plan: PlanChapter, knownFactIds: ReadonlySet<string>): ContinuityContractV1 {
+export function assertRequiredContinuityContract(plan: PlanChapter, canon: NovelDir["canon"]): ContinuityContractV1 {
   if (!hasContinuityContract(plan)) {
     throw new Error("continuity contract required for generated plans: none of continuity_contract_version/schedule_fact/continuity_anchors/reader_info present (legacy plans are readable, but new plans must pin a version-1 contract)")
   }
-  return assertContinuityContract(plan, knownFactIds)
+  const contract = assertContinuityContract(plan, canon)
+  if (contract === null) throw new Error("invalid continuity contract: opted-in plan failed validation (unexpected null)")
+  return contract
+}
+
+export interface ContinuityValidationResult {
+  ok: boolean
+  errors: string[]
+  /** Non-null only when the plan carries a fully valid version-1 contract. */
+  contract: ContinuityContractV1 | null
+}
+
+/**
+ * Thin result-shaped API over validateContinuityContract for call sites that
+ * check a plan against a novel's canon dir (writer brief, plan step). One
+ * rule source: all validation logic lives in validateContinuityContract.
+ * `required: true` (generated plans) fails closed on contractless plans.
+ */
+export function validatePlanContinuity(
+  plan: PlanChapter,
+  canon: NovelDir["canon"],
+  opts: { required: boolean },
+): ContinuityValidationResult {
+  const has = hasContinuityContract(plan)
+  if (!has && opts.required) {
+    return {
+      ok: false,
+      errors: ["generated plan must pin a continuity contract (continuity_contract_version: 1, schedule_fact, continuity_anchors, reader_info)"],
+      contract: null,
+    }
+  }
+  const errors = validateContinuityContract(plan, canon)
+  if (errors.length > 0) return { ok: false, errors, contract: null }
+  return { ok: true, errors: [], contract: has ? (plan as unknown as ContinuityContractV1) : null }
 }
 
 function ensureDir(path: string): void {
