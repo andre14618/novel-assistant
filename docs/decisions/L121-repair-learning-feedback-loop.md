@@ -7,7 +7,7 @@ feedback disposition before handoff. The operator or agent classifies the
 lesson, then either integrates the reusable behavior into production-path
 harness logic or records why it is story-specific.
 
-Classifications (used verbatim in `feedback/` files and `feedback` rows):
+Classifications (used verbatim in `feedback/` files):
 
 - **Source defect:** fix the plan/source through reviewed proposal paths, then
   add or tighten a diagnostic, readiness target, checker, selector, prompt, or
@@ -28,5 +28,5 @@ Classifications (used verbatim in `feedback/` files and `feedback` rows):
 Closure obligation: every repair lane ends with a feedback-disposition note
 (review disposition step 5 of the loop protocol in AGENTS.md) whose lesson
 lands in `LESSONS.md` — as a prompt edit, check, or documented one-off. The
-`feedback` table stores `classification` + `lesson` + `integrated_into`
-(the file where the lesson was applied).
+Git-versioned feedback file is the durable record; SQLite is reserved for
+LLM-call telemetry.

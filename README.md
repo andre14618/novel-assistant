@@ -27,6 +27,7 @@ LLM_MODEL=Qwen3.8 LLM_API_KEY=local-tailnet bun run smoke
 ## Commands
 
 ```sh
+bun test                          # deterministic contract and schema tests
 bun run typecheck                 # tsc clean (covers src/, tools/, checks/)
 LLM_OFFLINE=1 bun run smoke       # dummy call → writes llm_calls row (no network)
 bun run check -- <chapter>.md <outline>.json   # deterministic gate
@@ -41,7 +42,7 @@ bun run export-old --tables llm_calls,chapters   # needs OLD_DB_URL (archive)
 
 ```
 src/llm.ts        slim DeepSeek client: extractJSON, retry/timeout, cost, logging
-src/db.ts         SQLite schema: llm_calls (parity + session_id), chapters, reviews, feedback
+src/db.ts         SQLite telemetry schema: llm_calls (parity + session_id)
 src/config.ts     config.json loader (two DeepSeek models, per-agent params)
 src/cost.ts       getTokenCost: cached-rate math
 src/loop/         chapter loop: plan → draft → gate → review → fix → disposition

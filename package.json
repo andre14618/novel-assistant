@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Pi-driven, file-first, chapter-by-chapter authoring loop with DeepSeek as sole LLM driver and SQLite telemetry. Successor to novel-harness (see docs/proposals/).",
   "scripts": {
+    "test": "bun test",
     "typecheck": "tsc --noEmit",
     "smoke": "bun tools/smoke-call.ts",
     "session-summary": "bun tools/session-summary.ts",

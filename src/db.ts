@@ -2,9 +2,9 @@ import { Database } from "bun:sqlite"
 
 /**
  * SQLite telemetry store (calls.db). One file, no ORM, no migrations table —
- * schema is created idempotently on first open. Mirrors the phase-1 gate:
- * full-fidelity llm_calls (old Postgres columns + session_id) plus the three
- * content tables from the proposal (chapters, reviews, feedback).
+ * schema is created idempotently on first open. The database records LLM-call
+ * telemetry only; chapter, review, and feedback artifacts remain file-first
+ * under novels/<name>/ and are versioned by Git.
  */
 
 export interface LLMCallEntry {
@@ -84,36 +84,6 @@ CREATE TABLE IF NOT EXISTS llm_calls (
 CREATE INDEX IF NOT EXISTS idx_llm_calls_session ON llm_calls(session_id);
 CREATE INDEX IF NOT EXISTS idx_llm_calls_chapter ON llm_calls(chapter);
 CREATE INDEX IF NOT EXISTS idx_llm_calls_agent ON llm_calls(agent);
-
-CREATE TABLE IF NOT EXISTS chapters (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  novel TEXT NOT NULL,
-  n INTEGER NOT NULL,
-  status TEXT NOT NULL DEFAULT 'planned',
-  plan_ref TEXT,
-  draft_path TEXT,
-  word_count INTEGER NOT NULL DEFAULT 0,
-  UNIQUE(novel, n)
-);
-
-CREATE TABLE IF NOT EXISTS reviews (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  chapter_id INTEGER NOT NULL REFERENCES chapters(id),
-  judge_version TEXT,
-  findings_json TEXT,
-  disposition TEXT,
-  passed INTEGER NOT NULL DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE TABLE IF NOT EXISTS feedback (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  chapter_id INTEGER NOT NULL REFERENCES chapters(id),
-  classification TEXT NOT NULL,
-  lesson TEXT,
-  integrated_into TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
 `
 
 let db: Database | null = null

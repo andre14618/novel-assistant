@@ -60,13 +60,11 @@ proposal is `docs/proposals/pi-chapter-loop-architecture-2026-05-18.md`.
    CONTINUITY ANCHORS / READER INFO STATE; fail-closed validation; legacy
    plans readable with marker); loop-dry fixture plan on v1. LESSONS L-2
    integrated (contract/brief scope only — no live chapter re-run).
-3. db-side `chapters`/`reviews`/`feedback` rows (loop writes files; joins
-   for cost-per-quality land with ch2 or a writer step).
-4. Seed import from old DB (on hold; archive down).
+3. Seed import from old DB (on hold; archive down).
 
 ## Verification commands
 
-- `bun run typecheck` · `LLM_OFFLINE=1 bun run smoke` ·
+- `bun test` · `bun run typecheck` · `LLM_OFFLINE=1 bun run smoke` ·
   `bun run check -- <chapter>.md <outline>.json` ·
   `bun run loop -- <novelDirOrName> <chapterN> [--dry]` ·
   `bun run session-summary [--session <id>]` · `bun run inspect [--chapter n]`.

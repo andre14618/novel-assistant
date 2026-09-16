@@ -50,5 +50,6 @@ md, LESSONS entry, state.md update, `llm_calls` row per step call.
 
 ## Cost/quality join
 
-After each chapter: `bun run session-summary --session <id>`; cost rows join
-review outcomes once `chapters`/`reviews` rows exist (phase 4 wiring).
+After each chapter, use `bun run session-summary --session <id>` for cost and
+latency telemetry. Review outcomes remain Git-versioned files; correlate them
+with the `session_id` and chapter tags recorded on each `llm_calls` row.
