@@ -136,8 +136,8 @@ async function executeRequest(opts: CallOptions): Promise<RawResponse> {
 
   if (process.env.LLM_OFFLINE === "1") return offlineResponse(opts)
 
-  const apiKey = process.env.DEEPSEEK_API_KEY
-  if (!apiKey) throw new Error("DEEPSEEK_API_KEY is not set (see .env.example)")
+  const apiKey = process.env.LLM_API_KEY ?? process.env.DEEPSEEK_API_KEY
+  if (!apiKey) throw new Error("LLM_API_KEY or DEEPSEEK_API_KEY is not set (see .env.example)")
 
   const body: Record<string, unknown> = {
     model,
@@ -178,7 +178,7 @@ async function executeRequest(opts: CallOptions): Promise<RawResponse> {
     const json = await res.json().catch(() => null)
     if (!res.ok) {
       const detail = json ? JSON.stringify(json).slice(0, 300) : res.statusText
-      lastError = new Error(`DeepSeek API ${res.status}: ${detail}`)
+      lastError = new Error(`LLM API ${res.status}: ${detail}`)
       if (res.status === 429 || res.status >= 500) {
         if (attempt < maxAttempts) {
           const delayMs = 500 * 2 ** (attempt - 1)

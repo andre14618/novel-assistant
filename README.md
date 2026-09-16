@@ -15,6 +15,15 @@ bun install
 cp .env.example .env   # set DEEPSEEK_API_KEY
 ```
 
+DeepSeek remains the default. For a one-run OpenAI-compatible override (for
+example, the tailnet AI rig), set `LLM_API_URL`, `LLM_MODEL`, and
+`LLM_API_KEY`; no `config.json` swap is required:
+
+```sh
+LLM_API_URL=http://rig.tailae3a06.ts.net:8080/v1/chat/completions \
+LLM_MODEL=Qwen3.8 LLM_API_KEY=local-tailnet bun run smoke
+```
+
 ## Commands
 
 ```sh

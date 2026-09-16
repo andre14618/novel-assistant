@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs"
 import { z } from "zod"
 
 const ModelPricingSchema = z.object({
-  inputPerMTok: z.number().positive(),
-  outputPerMTok: z.number().positive(),
+  inputPerMTok: z.number().nonnegative(),
+  outputPerMTok: z.number().nonnegative(),
   cacheDiscount: z.number().min(0).max(1),
 })
 
@@ -31,7 +31,16 @@ let cached: AppConfig | null = null
 export function loadConfig(): AppConfig {
   if (cached) return cached
   const raw = readFileSync(import.meta.dir + "/../config.json", "utf-8")
-  cached = AppConfigSchema.parse(JSON.parse(raw))
+  const parsed = AppConfigSchema.parse(JSON.parse(raw))
+  const model = process.env.LLM_MODEL
+  cached = {
+    ...parsed,
+    apiUrl: process.env.LLM_API_URL ?? parsed.apiUrl,
+    defaultModel: model ?? parsed.defaultModel,
+    agents: model
+      ? Object.fromEntries(Object.entries(parsed.agents).map(([agent, cfg]) => [agent, { ...cfg, model }]))
+      : parsed.agents,
+  }
   return cached
 }
 

@@ -13,6 +13,11 @@
       "inputPerMTok": 1.74,
       "outputPerMTok": 3.48,
       "cacheDiscount": 0.99
+    },
+    "Qwen3.8": {
+      "inputPerMTok": 0,
+      "outputPerMTok": 0,
+      "cacheDiscount": 0
     }
   },
   "agents": {

@@ -22,8 +22,10 @@ proposal is `docs/proposals/pi-chapter-loop-architecture-2026-05-18.md`.
     the old per-chapter band $0.008–0.013), loop wall time ≈2–3 min.
     Provisional pass; fixer step failed both bounded passes (repair-layer
     gap, chapter preserved, LESSONS L-1).
-- DeepSeek is the sole provider (flash/pro). No orchestrator, no Postgres,
-  no UI. Files + git + `calls.db` telemetry.
+- DeepSeek is the production default (flash/pro). A three-variable
+  (`LLM_API_URL`, `LLM_MODEL`, `LLM_API_KEY`) OpenAI-compatible override exists
+  for bounded local-rig validation; it is not a provider registry. No
+  orchestrator, Postgres, or UI. Files + git + `calls.db` telemetry.
 
 ## Active surfaces
 
@@ -36,6 +38,10 @@ proposal is `docs/proposals/pi-chapter-loop-architecture-2026-05-18.md`.
   extract+zod failures once. Reviewer runs **thinking=false + JSON mode**
   (thinking + `response_format` conflict observed live: empty content at
   cap; config.json reviewer maxTokens 16384).
+- AI-rig compatibility (2026-09-10): Qwen3.8 live structured smoke passed;
+  sandboxed Rillgate draft+review produced 3,255 words, passed the native
+  deterministic gate, and found 1 plan deviation + 3 fact contradictions.
+  Production Rillgate files were not changed.
 - `novels/rillgate/` — imported repaired-source lineage: seed, canon
   (characters/facts/factId rows), plan/ch01.yaml (5 scenes, plannerspace
   contract shape), chapters/ch01.md (pilot draft), reviews/, feedback/,
