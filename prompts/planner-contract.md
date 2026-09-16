@@ -57,7 +57,53 @@ character_state_changes:
     emotional: "resolved, afraid"
     knows: ["the boundary stone was moved"]
     does_not_know: ["the Thornwood order"]
+# Continuity contract (version 1) — required on all generated plans (L-2):
+continuity_contract_version: 1
+schedule_fact:
+  fact_id: schedule-ch7     # ID the chapter will establish in canon/facts.md
+  text: "The sealed appointment is due at the bell on the ninth day."
+continuity_anchors:
+  fact_ids: [fact-1]        # canon/facts.md IDs this chapter must not contradict
+  character_states:         # chapter-start states (brief renders scene-present characters only)
+    - character: "Alory Vane"
+      location: "Guild tower room, Vellin"
+      emotional: "cornered"
+      knows: ["the four-degree discrepancy"]
+      does_not_know: ["the Thornwood order"]
+reader_info:
+  knows_fact_ids: [fact-1]  # canon fact IDs the reader already knows
+  withhold_fact_ids: [fact-2]  # canon fact IDs the reader must not be told yet
 ```
+
+## Continuity contract (version 1) — required on generated plans (L-2)
+
+The plan pins one explicit schedule fact and carries continuity anchors +
+reader-info state so the writer cannot casually invent conflicting dates or
+reveal withheld facts. The writer brief renders these as
+`FACT CONTINUITY ANCHORS` (schedule fact, then resolved canon facts with
+IDs retained), `CONTINUITY ANCHORS` (chapter-start states for the characters
+present in the scene) and `READER INFO STATE` (`READER KNOWS` /
+`WITHHOLD FROM READER`).
+
+- `continuity_contract_version: 1` — the only supported version.
+- `schedule_fact` — one explicit chapter schedule statement. `fact_id` is
+  the ID the chapter will establish in `canon/facts.md` (forward reference —
+  not yet in canon at plan time); `text` is the statement itself. Scenes
+  carry relative dates resolved against it.
+- `continuity_anchors.fact_ids` — canon fact IDs this chapter must not
+  contradict; each must resolve against `canon/facts.md`.
+- `continuity_anchors.character_states` — chapter-start
+  location/emotional/knows/does-not-know per character (free-text items).
+- `reader_info` — `knows_fact_ids` (reader already knows) and
+  `withhold_fact_ids` (reader must not be told yet); both resolve against
+  `canon/facts.md` and must not overlap.
+
+Validation (fail closed, before any LLM drafting): when any contract field
+is present, the whole version-1 contract is required — missing sections,
+unknown fact IDs, blank required strings, wrong array shapes, or
+knows/withhold overlap are plan errors. Legacy plans without any contract
+field remain readable; generated plans must carry a complete contract (the
+plan step enforces required mode before writing).
 
 ## Field inventory (from scene-contract-shape.ts)
 
