@@ -31,7 +31,7 @@ session's context pack (`canon/` + `feedback/` + `LESSONS.md`).
 - cause: source defect — scene anchors.temporal existed but did not bind a single schedule; no calendar fact row pinned the sale date
 - classification: source defect
 - action: planner contract must emit one explicit schedule fact (factId) per chapter; scenes carry relative dates resolved against it; writer brief renders fact continuity anchors (writer-brief.md steps 9-10)
-- status: pending
+- status: integrated (scope: continuity contract + brief spec only — v1 contract agreed and documented in prompts/writer-brief.md, loop-dry fixture plan on v1; no live chapter result, rillgate ch1 artifacts unchanged)
 
 ### L-3-reviewer-calibration-ch1: merged judge caught both real defects — keep rubric
 - chapter: rillgate ch1

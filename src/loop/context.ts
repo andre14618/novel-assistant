@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import type { NovelDir, PlanChapter } from "./novel"
+import { validatePlanContinuity, type NovelDir, type PlanChapter } from "./novel"
 
 /**
  * src/loop/context.ts — file-first context assemblies.
@@ -14,6 +14,12 @@ const PROMPT_DIR = import.meta.dir + "/../../prompts"
 
 export function readPrompt(path: string): string {
   return readFileSync(resolve(PROMPT_DIR, path), "utf-8")
+}
+
+/** One beat-level chapter-plan contract; never mix in the contradictory
+ * whole-arc skeleton prompt, which explicitly forbids scene detail. */
+export function renderPlannerSystem(): string {
+  return readPrompt("planner-contract.md")
 }
 
 // ── Canon facts ────────────────────────────────────────────────────────────
@@ -60,6 +66,22 @@ export function renderPlannerContext(novel: NovelDir, chapterN: number): string 
   return sections.join("\n\n")
 }
 
+// ── Plan continuity contract (phase-5 backlog item 2, LESSONS L-2) ────────
+// Canonical types + validation live in src/loop/novel.ts (single rule
+// source); the brief only renders the validated contract (see
+// renderWriterBrief), which calls validatePlanContinuity imported above.
+
+/** Resolve canon fact ids to rows, order-preserving (unknown ids skipped — validation forbids them). */
+function resolveFactRows(canon: NovelDir["canon"], ids: string[]): FactRow[] {
+  const byId = new Map(parseFacts(canon["facts.md"] ?? "").map(f => [f.id, f]))
+  const rows: FactRow[] = []
+  for (const id of ids) {
+    const row = byId.get(id)
+    if (row) rows.push(row)
+  }
+  return rows
+}
+
 // ── Writer brief (writer-brief.md assembly spec) ───────────────────────────
 
 export interface BriefCharacter {
@@ -92,10 +114,29 @@ export function parseCharacters(charactersMd: string): BriefCharacter[] {
   return chars
 }
 
-/** Brief header + scene contract + obligations per writer-brief.md steps 3/5/8. */
+/**
+ * Brief header + scene contract + obligations + continuity sections per
+ * writer-brief.md (steps 3/5/8/9/10/14).
+ *
+ * Stable section order (cache-prefix discipline): header, SCENE CONTRACT,
+ * OBLIGATIONS, FACT CONTINUITY ANCHORS (schedule first, then canon facts
+ * with ids), CONTINUITY ANCHORS (chapter-start states, scene-present
+ * characters only), CHARACTERS, READER INFO STATE (READER KNOWS / WITHHOLD
+ * FROM READER). Legacy plans (no continuity-contract fields) render a
+ * concise unavailable marker in place of the continuity sections and never
+ * fabricate state; a plan with partial/invalid version-1 fields throws
+ * (fail closed). Empty lists render an honest `(none)`.
+ */
 export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], sceneIndex: number): string {
   const scene = plan.scenes[sceneIndex]
   if (!scene) throw new Error(`scene index ${sceneIndex} out of range (${plan.scenes.length} scenes)`)
+
+  const continuity = validatePlanContinuity(plan, canon, { required: false })
+  if (!continuity.ok) {
+    throw new Error(`writer brief: invalid continuity contract: ${continuity.errors.join("; ")}`)
+  }
+  const contract = continuity.contract
+
   const charactersMd = canon["characters.md"] ?? ""
   const chars = parseCharacters(charactersMd)
   const present = chars.filter(c => scene.characters.some(n => c.name.toLowerCase() === n.toLowerCase()))
@@ -131,6 +172,52 @@ export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], s
     lines.push("")
   }
 
+  if (contract) {
+    // writer-brief.md step 9 — fact continuity anchors: the chapter's pinned
+    // schedule fact first, then canon facts resolved with ids retained.
+    lines.push("FACT CONTINUITY ANCHORS:")
+    lines.push(`  schedule: [id=${contract.schedule_fact.fact_id}] ${contract.schedule_fact.text}`)
+    const anchorFacts = resolveFactRows(canon, contract.continuity_anchors.fact_ids)
+    if (anchorFacts.length > 0) {
+      for (const f of anchorFacts) lines.push(`  - [id=${f.id}] ${f.fact}`)
+    } else {
+      lines.push("  (none)")
+    }
+    lines.push("")
+
+    // writer-brief.md step 10 — chapter-start character states, only for
+    // characters present in this scene.
+    lines.push("CONTINUITY ANCHORS:")
+    const sceneChars = (scene.characters.length > 0 ? scene.characters : plan.characters_present).map(n => n.toLowerCase())
+    const states = contract.continuity_anchors.character_states.filter(cs => sceneChars.includes(cs.character.toLowerCase()))
+    if (states.length > 0) {
+      for (const cs of states) {
+        lines.push(`  ${cs.character}:`)
+        lines.push(`    location: ${cs.location}`)
+        lines.push(`    emotional: ${cs.emotional}`)
+        if (cs.knows.length > 0) {
+          lines.push("    knows:")
+          for (const k of cs.knows) lines.push(`      - ${k}`)
+        } else {
+          lines.push("    knows: (none)")
+        }
+        if (cs.does_not_know.length > 0) {
+          lines.push("    does not know:")
+          for (const k of cs.does_not_know) lines.push(`      - ${k}`)
+        } else {
+          lines.push("    does not know: (none)")
+        }
+      }
+    } else {
+      lines.push("  (none)")
+    }
+    lines.push("")
+  } else {
+    // Legacy plan: honest marker in the continuity slot, no fabricated state.
+    lines.push("CONTINUITY: (legacy plan — no continuity contract; continuity anchors and reader-info state unavailable)")
+    lines.push("")
+  }
+
   if (present.length > 0) {
     lines.push("CHARACTERS:")
     for (const c of present) {
@@ -138,6 +225,26 @@ export function renderWriterBrief(plan: PlanChapter, canon: NovelDir["canon"], s
       lines.push(`  Voice: ${c.voice || "—"}`)
       lines.push(`  Drives: ${c.drives || "—"}`)
       lines.push(`  Avoids: ${c.avoids || "—"}`)
+    }
+    lines.push("")
+  }
+
+  if (contract) {
+    // writer-brief.md step 14 — reader info state (reveal discipline).
+    lines.push("READER INFO STATE:")
+    lines.push("  READER KNOWS:")
+    const knownFacts = resolveFactRows(canon, contract.reader_info.knows_fact_ids)
+    if (knownFacts.length > 0) {
+      for (const f of knownFacts) lines.push(`    - [id=${f.id}] ${f.fact}`)
+    } else {
+      lines.push("    (none)")
+    }
+    lines.push("  WITHHOLD FROM READER:")
+    const withheldFacts = resolveFactRows(canon, contract.reader_info.withhold_fact_ids)
+    if (withheldFacts.length > 0) {
+      for (const f of withheldFacts) lines.push(`    - [id=${f.id}] ${f.fact}`)
+    } else {
+      lines.push("    (none)")
     }
     lines.push("")
   }

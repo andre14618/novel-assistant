@@ -4,6 +4,8 @@ Horizon = 1 chapter. The planner agent reads `canon/` + `feedback/` +
 `LESSONS.md` + `state.md` and writes one file per chapter. Scene contracts
 keep the L095/L110 contract shape (obligations + endpoints); the proposal
 drops proposal-envelope surfaces — dispositions in `feedback/` replace them.
+Respond with only one valid YAML document matching the file shape below. Do not
+wrap it in Markdown fences or return the whole-arc `chapters` JSON shape.
 
 Adapted from `src/agents/writer/scene-contract-shape.ts` (field inventory)
 and the planner prompt stack (`prompts/planner/chapter-outline-system.md`,
@@ -57,7 +59,54 @@ character_state_changes:
     emotional: "resolved, afraid"
     knows: ["the boundary stone was moved"]
     does_not_know: ["the Thornwood order"]
+# Continuity contract (version 1) — required on all generated plans (L-2):
+continuity_contract_version: 1
+schedule_fact:
+  fact_id: schedule-ch7     # stable plan-local trace ID for this schedule anchor
+  text: "The sealed appointment is due at the bell on the ninth day."
+continuity_anchors:
+  fact_ids: [fact-1]        # canon/facts.md IDs this chapter must not contradict
+  character_states:         # chapter-start states (brief renders scene-present characters only)
+    - character: "Alory Vane"
+      location: "Guild tower room, Vellin"
+      emotional: "cornered"
+      knows: ["the four-degree discrepancy"]
+      does_not_know: ["the Thornwood order"]
+reader_info:
+  knows_fact_ids: [fact-1]  # canon fact IDs the reader already knows
+  withhold_fact_ids: [fact-2]  # canon fact IDs the reader must not be told yet
 ```
+
+## Continuity contract (version 1) — required on generated plans (L-2)
+
+The plan pins one explicit schedule fact and carries continuity anchors +
+reader-info state so the writer cannot casually invent conflicting dates or
+reveal withheld facts. The writer brief renders these as
+`FACT CONTINUITY ANCHORS` (schedule fact, then resolved canon facts with
+IDs retained), `CONTINUITY ANCHORS` (chapter-start states for the characters
+present in the scene) and `READER INFO STATE` (`READER KNOWS` /
+`WITHHOLD FROM READER`).
+
+- `continuity_contract_version: 1` — the only supported version.
+- `schedule_fact` — one explicit chapter schedule statement. `fact_id` is a
+  stable plan-local trace ID for this schedule anchor; `text` is the statement
+  itself. It does not need to pre-exist in canon. Scenes
+  carry relative dates resolved against it.
+- `continuity_anchors.fact_ids` — canon fact IDs this chapter must not
+  contradict; each must resolve against `canon/facts.md`.
+- `continuity_anchors.character_states` — chapter-start
+  location/emotional/knows/does-not-know per character (free-text items).
+- `reader_info` — `knows_fact_ids` (reader already knows) and
+  `withhold_fact_ids` (reader must not be told yet); both resolve against
+  `canon/facts.md` and must not overlap.
+
+Validation (fail closed, before any LLM drafting): when any contract field
+is present, the whole version-1 contract is required — missing sections,
+unknown fact IDs, duplicate fact IDs (within a list or in canon/facts.md),
+duplicate character anchors (case-insensitive), blank required strings,
+wrong array shapes, or knows/withhold overlap are plan errors. Legacy plans
+without any contract field remain readable; generated plans must carry a
+complete contract (the plan step enforces required mode before writing).
 
 ## Field inventory (from scene-contract-shape.ts)
 

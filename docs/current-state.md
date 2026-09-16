@@ -1,6 +1,6 @@
 ---
 status: active
-updated: 2026-08-27
+updated: 2026-09-16
 role: canonical-current-truth
 ---
 
@@ -31,9 +31,8 @@ proposal is `docs/proposals/pi-chapter-loop-architecture-2026-05-18.md`.
 
 - `src/loop/` — run.ts CLI, steps.ts (six steps; `extractWriterProse`,
   `runDeterministicGate`, `provisionalClassification`), novel.ts, context.ts
-  (planner/writer/reviewer renderers — **writer-brief steps 9–10
-  (continuity anchors, reader-info) not yet rendered** → pilot P0 gap),
-  review-schema.ts.
+  (planner/writer/reviewer renderers; writer brief renders the v1
+  continuity contract per `prompts/writer-brief.md`), review-schema.ts.
 - `src/llm.ts` — slim client; `LLM_OFFLINE_RESPONSE`; `callAgent` retries
   extract+zod failures once. Reviewer runs **thinking=false + JSON mode**
   (thinking + `response_format` conflict observed live: empty content at
@@ -55,9 +54,12 @@ proposal is `docs/proposals/pi-chapter-loop-architecture-2026-05-18.md`.
    scene-generation system prompt; gate caught 6 blockers both passes.
    Build dedicated fixer prompt (flagged-excerpt revisions, character/POV
    binding, per-beat application) — LESSONS L-1.
-2. **Calendar facts + continuity anchors in brief** — plan must pin one
-   schedule fact; writer brief must render fact continuity anchors +
-   reader-info state (writer-brief.md steps 9–10) — LESSONS L-2.
+2. **Calendar facts + continuity anchors in brief** — delivered at
+   contract/spec level: v1 continuity contract in `prompts/writer-brief.md`
+   (one schedule fact per chapter; brief renders FACT CONTINUITY ANCHORS /
+   CONTINUITY ANCHORS / READER INFO STATE; fail-closed validation; legacy
+   plans readable with marker); loop-dry fixture plan on v1. LESSONS L-2
+   integrated (contract/brief scope only — no live chapter re-run).
 3. db-side `chapters`/`reviews`/`feedback` rows (loop writes files; joins
    for cost-per-quality land with ch2 or a writer step).
 4. Seed import from old DB (on hold; archive down).

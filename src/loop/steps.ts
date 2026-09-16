@@ -4,8 +4,8 @@ import { callLLM, callAgent } from "../llm"
 import { validateChapterDraft, type ChapterOutlineLike } from "../../checks/validation"
 import { detectProseIntegrityIssues } from "../../checks/integrity"
 import { detectSyncDefects } from "../../checks/quality"
-import { readPlan, readChapter, writeChapter, writeState, readState, openNovel, ensureDir, type NovelDir, type PlanChapter } from "./novel"
-import { renderPlannerContext, renderWriterBrief, renderReviewerContext, readPrompt } from "./context"
+import { readPlan, readChapter, writeChapter, writeState, readState, openNovel, ensureDir, validatePlanContinuity, type NovelDir, type PlanChapter } from "./novel"
+import { renderPlannerContext, renderPlannerSystem, renderWriterBrief, renderReviewerContext, readPrompt } from "./context"
 import { ReviewSchema, type ReviewResult } from "./review-schema"
 import { extractJSON } from "../llm"
 
@@ -42,11 +42,10 @@ export async function planStep(novel: NovelDir, n: number, opts: StepOptions): P
     throw new Error(`dry plan step: ${planPath} does not exist`)
   }
 
-  const system = [
-    readPrompt("planner-contract.md"),
-    "",
-    readPrompt("planner/chapter-outline-system.md"),
-  ].join("\n\n")
+  // This step produces one beat-level chapter plan. Do not append the
+  // whole-arc chapter-outline prompt: it explicitly forbids scenes and
+  // continuity fields, contradicting this contract.
+  const system = renderPlannerSystem()
   const user = renderPlannerContext(novel, n)
   const outcome = await callLLM({
     agent: "planner",
@@ -60,6 +59,12 @@ export async function planStep(novel: NovelDir, n: number, opts: StepOptions): P
   })
   const { stringify } = await import("yaml")
   const plan = (await import("yaml")).parse(outcome.content) as PlanChapter
+  // Fail closed before write: generated plans must pin a fully valid
+  // version-1 continuity contract (phase-5 backlog item 2, LESSONS L-2).
+  const continuity = validatePlanContinuity(plan, novel.canon, { required: true })
+  if (!continuity.ok) {
+    throw new Error(`plan rejected before write (continuity contract): ${continuity.errors.join("; ")}`)
+  }
   writeFileSync(planPath, stringify(plan), "utf-8")
   console.log(`[LOOP] plan: wrote ${planPath} (${outcome.usage.promptTokens}→${outcome.usage.completionTokens} tok, $${outcome.cost.toFixed(5)})`)
   return plan
