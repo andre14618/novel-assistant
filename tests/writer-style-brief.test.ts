@@ -102,7 +102,7 @@ describe("renderWriterBrief — no style.md (honest absence)", () => {
     for (let i = 0; i < plan.scenes.length; i++) {
       parts.push(`===== SCENE ${i} =====\n` + renderWriterBrief(plan, novel.canon, i, novel.style))
     }
-    const actual = parts.join("\n") + "\n"
+    const actual = parts.join("\n")
     const golden = readFileSync(resolve(import.meta.dir, GOLDEN), "utf-8")
     expect(actual).toBe(golden)
   })
