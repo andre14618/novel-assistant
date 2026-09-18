@@ -103,3 +103,12 @@ keep it diagnostic/docs-only or stop for user judgment.
 
 If a change needs Postgres, an orchestrator, a UI, or a multi-provider registry,
 it does not belong here — stop and re-check the proposal's drop-list.
+
+## Local AI resource preference
+
+When using the local AI rig, favor complete, high-quality work with generous
+context, output-token, retry, and elapsed-time budgets within the promoted
+runtime contract. Parallelize genuinely independent analysis or implementation
+when useful, but do not require parallelism or split a cohesive task merely to
+use available capacity. Keep authority finite, preserve evidence gates, and
+leave promotion to the operator.
